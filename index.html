@@ -33,7 +33,7 @@
 <body>
 
     <div class="container">
-        <h2>Formulir Visit Teknisi</h2>
+        <h2>Formulir Visit Laporan Bulanan</h2>
         <form id="visitForm">
             <div class="form-group">
                 <label>Nama Teknisi</label>
@@ -60,15 +60,15 @@
                 <input type="date" id="tanggalVisit" required>
             </div>
             <div class="form-group">
-                <label>Nama PIC (Person In Charge)</label>
-                <input type="text" id="namaPic" placeholder="Contoh: Rifki" required>
+                <label>Nama PIC/FLS</label>
+                <input type="text" id="namaPic" placeholder="Contoh: Rifki Nurdianto" required>
             </div>
             <div class="form-group">
-                <label>Nomor Telepon PIC</label>
+                <label>Nomor Telepon PIC/FLS</label>
                 <input type="tel" id="telpPic" required>
             </div>
             <div class="form-group">
-                <label>Email PIC</label>
+                <label>Email PIC/FLS</label>
                 <input type="email" id="emailPic" required>
             </div>
             <button type="submit" id="submitBtn">Submit</button>
@@ -88,12 +88,12 @@
                 <thead>
                     <tr>
                         <th>Waktu Input</th> <!-- Kolom Baru -->
-                        <th>Tgl Visit</th>
-                        <th>Teknisi</th>
+                        <th>Tanggal Visit</th>
+                        <th>Nama Teknisi</th>
                         <th>Lokasi</th>
-                        <th>PIC</th>
-                        <th>Telp PIC</th>
-                        <th>Email PIC</th>
+                        <th>PIC/FLS</th>
+                        <th>Telp PIC/FLS</th>
+                        <th>Email PIC/FLS</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -186,7 +186,7 @@
             renderTable();
 
             // Format pesan Telegram dengan tambahan Timestamp
-            const telegramMessage = `🛠 *LAPORAN VISIT TEKNISI*\n\n` +
+            const telegramMessage = `*Pengajuan Visit Laporan Bulanan*\n\n` +
                                     `*Waktu Input:* ${data.timestamp}\n` +
                                     `*Nama Teknisi:* ${data.teknisi}\n` +
                                     `*Lokasi:* ${data.lokasi}\n` +
@@ -209,10 +209,10 @@
             .then(response => response.json())
             .then(result => {
                 if(result.ok) {
-                    alert('Data berhasil disimpan dan dikirim ke Telegram!');
+                    alert('Data berhasil disimpan.');
                     visitForm.reset(); 
                 } else {
-                    alert('Gagal mengirim ke Telegram. Cek Token dan Chat ID.');
+                    alert('Gagal mengirim data.');
                 }
             })
             .catch(error => {
@@ -240,7 +240,7 @@
             }
 
             // Menambahkan Header "Waktu Input" di Excel
-            let csvContent = "Waktu Input;Tgl Visit;Teknisi;Lokasi;PIC;Telp PIC;Email PIC\n";
+            let csvContent = "Waktu Input;Tanggal Visit;Nama Teknisi;Lokasi;Nama PIC/FLS;Telp PIC/FLS;Email PIC/FLS\n";
             
             filteredLogs.forEach(log => {
                 const waktuInput = log.timestamp ? log.timestamp : '-';
