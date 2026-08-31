@@ -3,262 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Log Visit Teknisi</title>
+    <title>Formulir Visit Teknisi</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; padding: 20px; max-width: 900px; margin: 0 auto; }
-        .container { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 25px; }
-        h2 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { text-align: center; color: #2c3e50; margin-bottom: 25px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input[type="text"], input[type="date"], input[type="email"], input[type="tel"], input[type="month"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: white; }
-        button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
-        button:hover { background-color: #2980b9; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        .btn-submit { background-color: #3498db; color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-submit:hover { background-color: #2980b9; }
         
-        .table-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 15px; }
-        .table-header h2 { border: none; margin: 0; padding: 0; }
-        .controls { display: flex; gap: 10px; align-items: center; }
-        .btn-export { background-color: #27ae60; width: auto; padding: 10px 15px; font-size: 14px; }
-        .btn-export:hover { background-color: #2ecc71; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        table, th, td { border: 1px solid #ddd; }
-        th, td { padding: 10px; text-align: left; }
-        th { background-color: #3498db; color: white; white-space: nowrap; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
+        .section-log { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
+        .log-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+        .btn-export { background-color: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; } /* Tersembunyi default untuk teknisi */
+        .btn-export:hover { background-color: #219653; }
         
-        .table-responsive { overflow-x: auto; }
-        .timestamp-text { font-size: 12px; color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #2c3e50; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .admin-login-box { text-align: right; margin-bottom: 15px; font-size: 12px; color: #7f8c8d; }
+        .admin-login-box a { color: #3498db; text-decoration: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Formulir Visit Laporan Bulanan</h2>
-        <form id="visitForm">
-            <div class="form-group">
-                <label>Nama Teknisi</label>
-                <select id="namaTeknisi" required>
-                    <option value="" disabled selected>-- Pilih Nama Teknisi --</option>
-                    <option value="Miftahuddin">Miftahuddin</option>
-                    <option value="Agung">Agung</option>
-                    <option value="Eko">Eko</option>
-                    <option value="Aji">Aji</option>
-                    <option value="Teknisi Lainnya">Teknisi Lainnya...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Lokasi Visit</label>
-                <select id="lokasiVisit" required>
-                    <option value="" disabled selected>-- Pilih Lokasi Visit --</option>
-                    <option value="Wisma Mulia 2">Wisma Mulia 2</option>
-                    <option value="Cakung">Cakung</option>
-                    <option value="Lokasi Lainnya">Lokasi Lainnya...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Tanggal Visit</label>
-                <input type="date" id="tanggalVisit" required>
-            </div>
-            <div class="form-group">
-                <label>Nama PIC/FLS</label>
-                <input type="text" id="namaPic" placeholder="Contoh: Rifki Nurdianto" required>
-            </div>
-            <div class="form-group">
-                <label>Nomor Telepon PIC/FLS</label>
-                <input type="tel" id="telpPic" required>
-            </div>
-            <div class="form-group">
-                <label>Email PIC/FLS</label>
-                <input type="email" id="emailPic" required>
-            </div>
-            <button type="submit" id="submitBtn">Submit</button>
-        </form>
+<div class="container">
+    <div class="admin-login-box">
+        Mode: <span id="userRole">Teknisi Lapangan</span> | <a id="adminToggle" onclick="toggleAdmin()">Login Admin</a>
     </div>
 
-    <div class="container">
-        <div class="table-header">
-            <h2>Log Pengisian</h2>
-            <div class="controls">
-                <input type="month" id="filterBulan" title="Pilih Bulan">
-                <button id="btnExport" class="btn-export">Unduh Excel</button>
+    <h2>Formulir Visit Teknisi</h2>
+    
+    <form id="visitForm">
+        <div class="form-group">
+            <label for="teknisi">Nama Teknisi</label>
+            <select id="teknisi" required>
+                <option value="">-- Pilih Nama Teknisi --</option>
+                <option value="Agung">Agung</option>
+                <option value="Aji">Aji</option>
+                <option value="Eko">Eko</option>
+                <option value="Miftah">Miftah</option>
+                <option value="Rifki">Rifki</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="lokasi">Lokasi Visit</label>
+            <select id="lokasi" required>
+                <option value="">-- Pilih Lokasi Visit --</option>
+                <option value="Wisma Mulia 2">Wisma Mulia 2</option>
+                <option value="Sorong PSO">Sorong PSO</option>
+                <option value="Cakung Hub">Cakung Hub</option>
+                <option value="Telkom Landmark">Telkom Landmark</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tanggal">Tanggal Visit</label>
+            <input type="date" id="tanggal" required>
+        </div>
+
+        <div class="form-group">
+            <label for="pic">Nama PIC (Person In Charge)</label>
+            <input type="text" id="pic" placeholder="Contoh: Rifki" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telp">Nomor Telepon PIC</label>
+            <input type="tel" id="telp" placeholder="Contoh: 08123456789" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email PIC</label>
+            <input type="email" id="email" placeholder="Contoh: pic@email.com" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit</button>
+    </form>
+
+    <div class="section-log">
+        <div class="log-header">
+            <h3>Log Pengisian (Database Cloud)</h3>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="month" id="filterBulan" onchange="renderTable()">
+                <button id="btnExport" class="btn-export" onclick="exportExcel()">Unduh Excel</button>
             </div>
         </div>
-        <div class="table-responsive">
-            <table id="logTable">
+        <div style="overflow-x: auto;">
+            <table>
                 <thead>
                     <tr>
-                        <th>Waktu Input</th> <!-- Kolom Baru -->
-                        <th>Tanggal Visit</th>
-                        <th>Nama Teknisi</th>
+                        <th>Waktu Input</th>
+                        <th>Tgl Visit</th>
+                        <th>Teknisi</th>
                         <th>Lokasi</th>
-                        <th>PIC/FLS</th>
-                        <th>Telp PIC/FLS</th>
-                        <th>Email PIC/FLS</th>
+                        <th>PIC</th>
+                        <th>Telp PIC</th>
+                        <th>Email PIC</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <!-- Data akan muncul di sini -->
+                <tbody id="logTableBody">
+                    <tr><td colspan="7" style="text-align: center;">Memuat data dari database...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
+</div>
 
-    <script>
-        // === KONFIGURASI TELEGRAM BOT ===
-        const BOT_TOKEN = '8886255384:AAGaf0Rcdu5-I9O-wFXOixyk3rlSRBwgY0s'; 
-        const CHAT_ID = '645887429'; 
+<script>
+    // ==========================================
+    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT KAMU DI SINI:
+    // ==========================================
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby7jtypa_d5jXLMxDWmVdfGZnmvLzC6gEvngW1QH0DssmZ3P-MzkG6PtcmaiM0sh7mP/exec";
 
-        const visitForm = document.getElementById('visitForm');
-        const tableBody = document.getElementById('tableBody');
-        const submitBtn = document.getElementById('submitBtn');
-        const filterBulan = document.getElementById('filterBulan');
-        const btnExport = document.getElementById('btnExport');
+    // Konfigurasi Telegram Bot (Ganti token & chat_id sesuai project sebelumnya jika perlu)
+    const TELEGRAM_BOT_TOKEN = "8886255384:AAGaf0Rcdu5-I9O-wFXOixyk3rlSRBwgY0s";
+    const TELEGRAM_CHAT_ID = "645887429";
 
-        const today = new Date();
-        const currentMonth = today.toISOString().slice(0, 7); 
-        filterBulan.value = currentMonth;
+    let logData = [];
 
-        function getLogs() {
-            const logs = localStorage.getItem('visitLogs');
-            return logs ? JSON.parse(logs) : [];
+    // Ambil data saat halaman dimuat
+    window.onload = function() {
+        document.getElementById('filterBulan').value = new Date().toISOString().slice(0, 7);
+        fetchDataFromCloud();
+    };
+
+    // Fungsi Mengambil Data dari Google Sheets
+    function fetchDataFromCloud() {
+        if (WEB_APP_URL.includes("SALIN_URL")) {
+            document.getElementById('logTableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">URL Google Apps Script belum diatur di dalam kode!</td></tr>';
+            return;
         }
 
-        function renderTable() {
-            const logs = getLogs();
-            tableBody.innerHTML = '';
-            
-            const selectedMonth = filterBulan.value; 
-            
-            const filteredLogs = logs.filter(log => {
-                if (!selectedMonth) return true; 
-                return log.tanggal.startsWith(selectedMonth);
-            });
-
-            if (filteredLogs.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Tidak ada data untuk bulan ini</td></tr>`;
-                return;
-            }
-
-            filteredLogs.forEach(log => {
-                // Jika log lama tidak punya timestamp, beri tanda strip (-)
-                const waktuInput = log.timestamp ? log.timestamp : '-';
-                
-                const row = `<tr>
-                    <td class="timestamp-text">${waktuInput}</td>
-                    <td>${log.tanggal}</td>
-                    <td>${log.teknisi}</td>
-                    <td>${log.lokasi}</td>
-                    <td>${log.pic}</td>
-                    <td>${log.telp}</td>
-                    <td>${log.email}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
-        }
-
-        renderTable();
-        filterBulan.addEventListener('change', renderTable);
-
-        visitForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            submitBtn.textContent = 'Mengirim...';
-            submitBtn.disabled = true;
-
-            // Membuat Timestamp otomatis saat disubmit (Format: DD/MM/YYYY, HH:MM:SS)
-            const waktuSekarang = new Date().toLocaleString('id-ID');
-
-            const data = {
-                timestamp: waktuSekarang, // Menyimpan waktu input
-                teknisi: document.getElementById('namaTeknisi').value,
-                lokasi: document.getElementById('lokasiVisit').value,
-                tanggal: document.getElementById('tanggalVisit').value,
-                pic: document.getElementById('namaPic').value,
-                telp: document.getElementById('telpPic').value,
-                email: document.getElementById('emailPic').value
-            };
-
-            const logs = getLogs();
-            logs.unshift(data); 
-            localStorage.setItem('visitLogs', JSON.stringify(logs));
-            
-            filterBulan.value = data.tanggal.slice(0, 7);
-            renderTable();
-
-            // Format pesan Telegram dengan tambahan Timestamp
-            const telegramMessage = `*Pengajuan Visit Laporan Bulanan*\n\n` +
-                                    `*Waktu Input:* ${data.timestamp}\n` +
-                                    `*Nama Teknisi:* ${data.teknisi}\n` +
-                                    `*Lokasi:* ${data.lokasi}\n` +
-                                    `*Tanggal Visit:* ${data.tanggal}\n` +
-                                    `*Nama PIC:* ${data.pic}\n` +
-                                    `*No. Telp PIC:* ${data.telp}\n` +
-                                    `*Email PIC:* ${data.email}`;
-
-            const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-            
-            fetch(telegramUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: telegramMessage,
-                    parse_mode: 'Markdown'
-                })
-            })
+        fetch(WEB_APP_URL)
             .then(response => response.json())
-            .then(result => {
-                if(result.ok) {
-                    alert('Data berhasil disimpan.');
-                    visitForm.reset(); 
-                } else {
-                    alert('Gagal mengirim data.');
-                }
+            .then(data => {
+                logData = data;
+                renderTable();
             })
             .catch(error => {
-                alert('Error detail: ' + error.message);
-            })
-            .finally(() => {
-                submitBtn.textContent = 'Submit';
-                submitBtn.disabled = false;
+                console.error('Error:', error);
+                document.getElementById('logTableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Gagal memuat data dari database cloud.</td></tr>';
             });
+    }
+
+    // Submit Form
+    document.getElementById('visitForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (WEB_APP_URL.includes("SALIN_URL")) {
+            alert("Harap masukkan URL Web App Google Apps Script terlebih dahulu di kode script!");
+            return;
+        }
+
+        const now = new Date();
+        const timestamp = now.toLocaleDateString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + now.toLocaleTimeString('id-ID');
+
+        const newData = {
+            timestamp: timestamp,
+            tanggal: document.getElementById('tanggal').value,
+            teknisi: document.getElementById('teknisi').value,
+            lokasi: document.getElementById('lokasi').value,
+            pic: document.getElementById('pic').value,
+            telp: document.getElementById('telp').value,
+            email: document.getElementById('email').value
+        };
+
+        // Kirim ke Google Sheets via POST
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newData)
+        }).then(() => {
+            // Kirim ke Telegram Opsional
+            kirimTelegram(newData);
+
+            alert('Log visit berhasil disimpan ke database cloud!');
+            document.getElementById('visitForm').reset();
+            
+            // Tunggu sebentar lalu refresh data tabel
+            setTimeout(fetchDataFromCloud, 2000);
+        }).catch(error => {
+            alert('Terjadi kesalahan saat menyimpan data.');
+            console.error(error);
+        });
+    });
+
+    function kirimTelegram(data) {
+        if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
+        const pesan = `🚨 *LOG VISIT TEKNISI BARU* 🚨\n\n` +
+                      `👤 *Teknisi:* ${data.teknisi}\n` +
+                      `🏢 *Lokasi:* ${data.lokasi}\n` +
+                      `📅 *Tgl Visit:* ${data.tanggal}\n` +
+                      `👤 *PIC:* ${data.pic} (${data.telp})\n` +
+                      `📧 *Email:* ${data.email}\n` +
+                      `⏰ *Waktu Input:* ${data.timestamp}`;
+        
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: pesan, parse_mode: 'Markdown' })
+        }).catch(err => console.log(err));
+    }
+
+    // Render Tabel Berdasarkan Filter Bulan
+    function renderTable() {
+        const filterBulan = document.getElementById('filterBulan').value;
+        const tbody = document.getElementById('logTableBody');
+        tbody.innerHTML = '';
+
+        const filteredData = logData.filter(item => {
+            if (!item.tanggal) return false;
+            return item.tanggal.startsWith(filterBulan);
         });
 
-        // Event Listener untuk tombol Export ke Excel (CSV)
-        btnExport.addEventListener('click', function() {
-            const logs = getLogs();
-            const selectedMonth = filterBulan.value;
-            
-            const filteredLogs = logs.filter(log => {
-                if (!selectedMonth) return true;
-                return log.tanggal.startsWith(selectedMonth);
-            });
+        if (filteredData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Tidak ada data untuk bulan ini</td></tr>';
+            return;
+        }
 
-            if (filteredLogs.length === 0) {
-                alert('Tidak ada data untuk diekspor pada bulan ini.');
-                return;
+        filteredData.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.timestamp || ''}</td>
+                <td>${item.tanggal || ''}</td>
+                <td>${item.teknisi || ''}</td>
+                <td>${item.lokasi || ''}</td>
+                <td>${item.pic || ''}</td>
+                <td>${item.telp || ''}</td>
+                <td>${item.email || ''}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Sistem Hak Akses Sederhana (Admin vs Teknisi)
+    function toggleAdmin() {
+        const roleSpan = document.getElementById('userRole');
+        const btnExport = document.getElementById('btnExport');
+        const toggleLink = document.getElementById('adminToggle');
+
+        if (roleSpan.innerText.includes('Teknisi')) {
+            const password = prompt("Masukkan sandi Admin:");
+            if (password === "admin123") { // Sandi admin bisa kamu ubah di sini
+                roleSpan.innerText = "Manajemen / Admin";
+                btnExport.style.display = "inline-block";
+                toggleLink.innerText = "Keluar Admin";
+                alert("Berhasil masuk sebagai Admin. Tombol unduh Excel diaktifkan.");
+            } else if (password !== null) {
+                alert("Sandi salah!");
             }
+        } else {
+            roleSpan.innerText = "Teknisi Lapangan";
+            btnExport.style.display = "none";
+            toggleLink.innerText = "Login Admin";
+            alert("Keluar dari mode admin.");
+        }
+    }
 
-            // Menambahkan Header "Waktu Input" di Excel
-            let csvContent = "Waktu Input;Tanggal Visit;Nama Teknisi;Lokasi;Nama PIC/FLS;Telp PIC/FLS;Email PIC/FLS\n";
-            
-            filteredLogs.forEach(log => {
-                const waktuInput = log.timestamp ? log.timestamp : '-';
-                // Menambahkan data Waktu Input ke dalam baris Excel
-                const row = `"${waktuInput}";"${log.tanggal}";"${log.teknisi}";"${log.lokasi}";"${log.pic}";"${log.telp}";"${log.email}"`;
-                csvContent += row + "\n";
-            });
+    // Fungsi Export Khusus Admin (Format CSV Semicolon)
+    function exportExcel() {
+        const filterBulan = document.getElementById('filterBulan').value;
+        const filteredData = logData.filter(item => item.tanggal && item.tanggal.startsWith(filterBulan));
 
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `Log_Visit_${selectedMonth || 'Semua'}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (filteredData.length === 0) {
+            alert("Tidak ada data untuk diunduh pada bulan ini.");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,Waktu Input;Tgl Visit;Teknisi;Lokasi;PIC;Telp PIC;Email PIC\r\n";
+        filteredData.forEach(item => {
+            csvContent += `"${item.timestamp}";"${item.tanggal}";"${item.teknisi}";"${item.lokasi}";"${item.pic}";"${item.telp}";"${item.email}"\r\n`;
         });
-    </script>
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Log_Visit_${filterBulan}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
 </body>
 </html>
