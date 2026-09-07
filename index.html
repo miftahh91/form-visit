@@ -155,9 +155,10 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="lokasi" id="labelLokasi">Lokasi Visit</label>
-                <select id="lokasi" required>
+            <!-- Lokasi Dropdown (Untuk Visit & UAT) -->
+            <div class="form-group" id="groupLokasiSelect">
+                <label for="lokasiSelect">Lokasi Visit</label>
+                <select id="lokasiSelect">
                     <option value="">-- Pilih Lokasi --</option>
                     <option value="KOJK Prov Jawa Barat">KOJK Prov Jawa Barat</option>
                     <option value="KOJK Prov Jawa Tengah">KOJK Prov Jawa Tengah</option>
@@ -190,13 +191,19 @@
                     <option value="KOJK Prov Maluku">KOJK Prov Maluku</option>
                     <option value="KOJK Prov Papua">KOJK Prov Papua</option>
                     <option value="KOJK Prov Jambi">KOJK Prov Jambi</option>
-                    <option value="KOJK Prov Bengkulu">KOJK Prov Bengkulu</option>
-                    <option value="KOJK Prov Nusa Tenggara Barat">KOJK Prov Nusa Tenggara Barat</option>
-                    <option value="KOJK Prov Nusa Tenggara Timur">KOJK Prov Nusa Tenggara Timur</option>
-                    <option value="KOJK Prov Kalimantan Barat">KOJK Prov Kalimantan Barat</option>
-                    <option value="KOJK Prov Kalimantan Tengah">KOJK Prov Kalimantan Tengah</option>
+                    <option value="Bengkulu">KOJK Prov Bengkulu</option>
+                    <option value="Mataram">KOJK Prov Nusa Tenggara Barat</option>
+                    <option value="Kupang">KOJK Prov Nusa Tenggara Timur</option>
+                    <option value="Pontianak">KOJK Prov Kalimantan Barat</option>
+                    <option value="Palangkaraya">KOJK Prov Kalimantan Tengah</option>
                     <option value="Gedung Arsip Salemba">Gedung Arsip Salemba</option>
                 </select>
+            </div>
+
+            <!-- Lokasi Input Teks (Untuk Pendampingan) -->
+            <div class="form-group" id="groupLokasiInput" style="display: none;">
+                <label for="lokasiInput">Lokasi Kegiatan</label>
+                <input type="text" id="lokasiInput" placeholder="Tuliskan nama lokasi kegiatan...">
             </div>
 
             <div class="form-group">
@@ -291,67 +298,25 @@
         document.getElementById('formTitle').innerText = kategori;
         document.getElementById('dynamicForm').reset();
 
-        const formGroupLokasi = document.getElementById('lokasi').parentElement;
+        const groupSelect = document.getElementById('groupLokasiSelect');
+        const groupInput = document.getElementById('groupLokasiInput');
+        const inputSelect = document.getElementById('lokasiSelect');
+        const inputTeks = document.getElementById('lokasiInput');
 
         if (kategori === 'Form Pendampingan') {
-            document.getElementById('labelLokasi').innerText = "Lokasi Kegiatan";
-            
-            // Ubah dropdown lokasi menjadi input teks biasa untuk Pendampingan
-            formGroupLokasi.innerHTML = `
-                <label for="lokasi" id="labelLokasi">Lokasi Kegiatan</label>
-                <input type="text" id="lokasi" placeholder="Tuliskan nama lokasi kegiatan..." required>
-            `;
+            groupSelect.style.display = 'none';
+            groupInput.style.display = 'block';
+            inputSelect.removeAttribute('required');
+            inputTeks.setAttribute('required', 'true');
 
             document.getElementById('picFields').style.display = 'none';
             document.getElementById('pendampinganFields').style.display = 'block';
             document.getElementById('detail').setAttribute('required', 'true');
         } else {
-            document.getElementById('labelLokasi').innerText = "Lokasi Visit";
-            
-            // Kembalikan menjadi dropdown KOJK lengkap untuk Visit dan UAT
-            formGroupLokasi.innerHTML = `
-                <label for="lokasi" id="labelLokasi">Lokasi Visit</label>
-                <select id="lokasi" required>
-                    <option value="">-- Pilih Lokasi --</option>
-                    <option value="KOJK Prov Jawa Barat">KOJK Prov Jawa Barat</option>
-                    <option value="KOJK Prov Jawa Tengah">KOJK Prov Jawa Tengah</option>
-                    <option value="KOJK Prov Jawa Timur">KOJK Prov Jawa Timur</option>
-                    <option value="KOJK Prov Sumatera Utara">KOJK Prov Sumatera Utara</option>
-                    <option value="KOJK Prov Sulawesi Selatan dan Sulawesi Barat">KOJK Prov Sulawesi Selatan dan Sulawesi Barat</option>
-                    <option value="KOJK Prov Sumatera Selatan dan Bangka Belitung">KOJK Prov Sumatera Selatan dan Bangka Belitung</option>
-                    <option value="KOJK Prov Bali">KOJK Prov Bali</option>
-                    <option value="KOJK Prov Kalimantan Timur dan Kalimantan Utara">KOJK Prov Kalimantan Timur dan Kalimantan Utara</option>
-                    <option value="KOJK Prov Banten">KOJK Prov Banten</option>
-                    <option value="KOJK Prov Daerah Istimewa Yogyakarta">KOJK Prov Daerah Istimewa Yogyakarta</option>
-                    <option value="KOJK Prov Sumatera Barat">KOJK Prov Sumatera Barat</option>
-                    <option value="KOJK Prov Riau">KOJK Prov Riau</option>
-                    <option value="KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara">KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara</option>
-                    <option value="KOJK Prov Lampung">KOJK Prov Lampung</option>
-                    <option value="KOJK Prov Kalimantan Selatan">KOJK Prov Kalimantan Selatan</option>
-                    <option value="KOJK Prov Cirebon">KOJK Prov Cirebon</option>
-                    <option value="KOJK Prov Tasikmalaya">KOJK Prov Tasikmalaya</option>
-                    <option value="KOJK Prov Solo">KOJK Prov Solo</option>
-                    <option value="KOJK Prov Tegal">KOJK Prov Tegal</option>
-                    <option value="KOJK Prov Purwokerto">KOJK Prov Purwokerto</option>
-                    <option value="KOJK Prov Malang">KOJK Prov Malang</option>
-                    <option value="KOJK Prov Kediri">KOJK Prov Kediri</option>
-                    <option value="KOJK Prov Jember">KOJK Prov Jember</option>
-                    <option value="KOJK Prov Aceh">KOJK Prov Aceh</option>
-                    <option value="KOJK Prov Kepulauan Riau">KOJK Prov Kepulauan Riau</option>
-                    <option value="KOJK Prov Sulawesi Tengah">KOJK Prov Sulawesi Tengah</option>
-                    <option value="KOJK Prov Sulawesi Tenggara">KOJK Prov Sulawesi Tenggara</option>
-                    <option value="KOJK Prov Sulawesi Tenggara Gedung 2">KOJK Prov Sulawesi Tenggara Gedung 2</option>
-                    <option value="KOJK Prov Maluku">KOJK Prov Maluku</option>
-                    <option value="KOJK Prov Papua">KOJK Prov Papua</option>
-                    <option value="KOJK Prov Jambi">KOJK Prov Jambi</option>
-                    <option value="Bengkulu">KOJK Prov Bengkulu</option>
-                    <option value="Mataram">KOJK Prov Nusa Tenggara Barat</option>
-                    <option value="Kupang">KOJK Prov Nusa Tenggara Timur</option>
-                    <option value="Pontianak">KOJK Prov Kalimantan Barat</option>
-                    <option value="Palangkaraya">KOJK Prov Kalimantan Tengah</option>
-                    <option value="Gedung Arsip Salemba">Gedung Arsip Salemba</option>
-                </select>
-            `;
+            groupSelect.style.display = 'block';
+            groupInput.style.display = 'none';
+            inputTeks.removeAttribute('required');
+            inputSelect.setAttribute('required', 'true');
 
             document.getElementById('picFields').style.display = 'block';
             document.getElementById('pendampinganFields').style.display = 'none';
@@ -392,13 +357,21 @@
         const now = new Date();
         const timestamp = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
 
+        // Mengambil nilai lokasi berdasarkan form yang aktif
+        let lokasiValue = "";
+        if (currentKategori === 'Form Pendampingan') {
+            lokasiValue = document.getElementById('lokasiInput').value.trim();
+        } else {
+            lokasiValue = document.getElementById('lokasiSelect').value;
+        }
+
         const payload = {
             token: SECRET_TOKEN,
             timestamp: timestamp,
             kategori: currentKategori,
             tanggal: document.getElementById('tanggal').value,
             teknisi: document.getElementById('teknisi').value,
-            lokasi: document.getElementById('lokasi').value,
+            lokasi: lokasiValue,
             pic: document.getElementById('pic').value,
             telp: document.getElementById('telp').value,
             email: document.getElementById('email').value,
