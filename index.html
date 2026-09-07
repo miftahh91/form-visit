@@ -354,10 +354,18 @@
 
     function submitForm(e) {
         e.preventDefault();
+        
+        // Ambil elemen tombol submit
+        const submitBtn = document.querySelector('.btn-submit');
+        const originalText = submitBtn.innerText;
+        
+        // Ubah tombol jadi mode loading & non-aktifkan
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `⏳ Mengirim Data...`;
+
         const now = new Date();
         const timestamp = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
 
-        // Mengambil nilai lokasi berdasarkan form yang aktif
         let lokasiValue = "";
         if (currentKategori === 'Form Pendampingan') {
             lokasiValue = document.getElementById('lokasiInput').value.trim();
@@ -386,6 +394,10 @@
         }).then(() => {
             kirimTelegram(payload);
             
+            // Kembalikan tombol ke kondisi semula
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+
             let popupHTML = "";
             if (payload.kategori === "Form Pendampingan") {
                 popupHTML = `
@@ -434,7 +446,12 @@
                 }
             });
 
-        }).catch(err => alert("Gagal mengirim data."));
+        }).catch(err => {
+            // Jika gagal, kembalikan tombol ke semula dan beri peringatan
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+            alert("Gagal mengirim data.");
+        });
     }
 
     function kirimTelegram(data) {
