@@ -26,13 +26,12 @@
         
         .section-log { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
         .log-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-        .btn-export { background-color: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
+        
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #2c3e50; color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #7f8c8d; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .top-bar a { color: #3498db; text-decoration: none; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -40,7 +39,6 @@
 <div class="container">
     <div class="top-bar">
         <div>Login: <strong id="activeTechnician">-</strong></div>
-        <div>Mode: <span id="userRole">Teknisi</span> | <a id="adminToggle" onclick="toggleAdmin()">Login Admin</a></div>
     </div>
 
     <!-- VIEW 1: LOGIN -->
@@ -63,7 +61,7 @@
                 <option value="Muhamad Wahyu">Muhammad Wahyu</option>
                 <option value="Arfan Affandi">Arfan Affandi</option>
                 <option value="Wahyu Mulaputra Maspeke">Wahyu Mulaputra Maspeke</option>
-                <option value="Sulaiman SUle">Sulaiman</option>
+                <option value="Sulaiman Sule">Sulaiman</option>
                 <option value="Fuja Rizky">Fuja Rizky Sahbana</option>
                 <option value="Yulli Ariyadi">Yulli Ariyadi</option>
                 <option value="Tatang Waula">Tatang Waula Nurwana</option>
@@ -109,7 +107,6 @@
                 <h3>Rekap Log Aktivitas Terpusat</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <input type="month" id="filterBulan" onchange="renderTable()">
-                    <button id="btnExport" class="btn-export" onclick="exportExcel()">Unduh Excel</button>
                 </div>
             </div>
             <div style="overflow-x: auto;">
@@ -187,7 +184,7 @@
                 <input type="date" id="tanggal" required>
             </div>
 
-            <!-- Field Tambahan Khusus Visit & UAT -->
+            <!-- Field Khusus Visit & UAT -->
             <div id="picFields">
                 <div class="form-group">
                     <label for="pic">Nama PIC</label>
@@ -203,7 +200,7 @@
                 </div>
             </div>
 
-            <!-- Field Tambahan Khusus Pendampingan -->
+            <!-- Field Khusus Pendampingan -->
             <div id="pendampinganFields" style="display: none;">
                 <div class="form-group">
                     <label for="detail">Nama / Deskripsi Kegiatan</label>
@@ -218,9 +215,9 @@
 
 <script>
     // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT DI SINI:
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzBVGcP2sUjfKW8ln2wEN4V_-K7aTXXGjiMs6me_DBrTJRXuqnMMecDTHb_9lN7nFd7/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwWBfOK5aYKYVCYVb1Jnhs-J7dq3qYHv_cPhiG0P1cybf2atDJ_0lqZNMg9aXLHBkSj/exec";
     
-    // Konfigurasi Telegram (Opsional, sesuaikan jika ingin aktif)
+    // Konfigurasi Telegram
     const TELEGRAM_BOT_TOKEN = "8886255384:AAGaf0Rcdu5-I9O-wFXOixyk3rlSRBwgY0s";
     const TELEGRAM_CHAT_ID = "645887429";
 
@@ -306,17 +303,14 @@
             detail: document.getElementById('detail').value
         };
 
-        // 1. Kirim ke Google Sheets
         fetch(WEB_APP_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         }).then(() => {
-            // 2. Kirim ke Telegram
             kirimTelegram(payload);
-
-            alert(`${currentKategori} Berhasil Kirim Data`);
+            alert(`${currentKategori} Berhasil mengirim data!`);
             kembaliKeDashboard();
         }).catch(err => alert("Gagal mengirim data."));
     }
@@ -369,35 +363,6 @@
             `;
             tbody.appendChild(row);
         });
-    }
-
-    function toggleAdmin() {
-        const role = document.getElementById('userRole');
-        const btn = document.getElementById('btnExport');
-        if (role.innerText.includes('Teknisi')) {
-            if (prompt("Sandi Admin:") === "admin123") {
-                role.innerText = "Admin";
-                btn.style.display = "inline-block";
-            } else { alert("Sandi salah!"); }
-        } else {
-            role.innerText = "Teknisi";
-            btn.style.display = "none";
-        }
-    }
-
-    function exportExcel() {
-        const filterBulan = document.getElementById('filterBulan').value;
-        const filtered = logData.filter(i => i.tanggal && i.tanggal.startsWith(filterBulan));
-        if (filtered.length === 0) { alert("Tidak ada data."); return; }
-
-        let csv = "data:text/csv;charset=utf-8,Waktu;Kategori;Tanggal;Teknisi;Lokasi;PIC/Detail\r\n";
-        filtered.forEach(i => {
-            csv += `"${i.timestamp}";"${i.kategori}";"${i.tanggal}";"${i.teknisi}";"${i.lokasi}";"${i.pic || i.detail}"\r\n`;
-        });
-        const link = document.createElement("a");
-        link.href = encodeURI(csv);
-        link.download = `Rekap_Log_${filterBulan}.csv`;
-        link.click();
     }
 </script>
 
