@@ -361,7 +361,6 @@
         }).then(() => {
             kirimTelegram(payload);
             
-            // --- MULAI BAGIAN YANG DIGANTI ---
             let popupHTML = "";
             if (payload.kategori === "Form Pendampingan") {
                 popupHTML = `
@@ -371,6 +370,10 @@
                         <b>Lokasi Visit:</b> ${payload.lokasi}<br>
                         <b>Detail Acara:</b> ${payload.detail}<br>
                         <b>Waktu Pengajuan:</b> ${payload.timestamp}
+                        <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
+                        <div style="text-align: center; color: #e74c3c; font-weight: bold;">
+                            📱 Silahkan Capture Pop Up Ini & Share ke Grup
+                        </div>
                     </div>
                 `;
             } else {
@@ -384,6 +387,10 @@
                         <b>Nomor Telp PIC:</b> ${payload.telp}<br>
                         <b>Email PIC:</b> ${payload.email}<br>
                         <b>Waktu Pengajuan:</b> ${payload.timestamp}
+                        <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
+                        <div style="text-align: center; color: #e74c3c; font-weight: bold;">
+                            📱 Silahkan Capture Pop Up Ini & Share ke Grup
+                        </div>
                     </div>
                 `;
             }
@@ -401,7 +408,6 @@
                     kembaliKeDashboard();
                 }
             });
-            // --- SELESAI BAGIAN YANG DIGANTI ---
 
         }).catch(err => alert("Gagal mengirim data."));
     }
