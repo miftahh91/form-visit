@@ -6,7 +6,7 @@
     <title>Portal Operasional Teknisi</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .container { max-width: 950px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         h2, h3 { text-align: center; color: #2c3e50; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
@@ -32,77 +32,48 @@
         th { background-color: #2c3e50; color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #7f8c8d; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .btn-logout { background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="top-bar">
-        <div>Login: <strong id="activeTechnician">-</strong></div>
-    </div>
-
-    <!-- VIEW 1: LOGIN -->
-    <div id="viewLogin" class="view-section active">
-        <h2>Login Teknisi Lapangan</h2>
-        <div class="form-group" style="max-width: 400px; margin: 0 auto;">
-            <label for="loginTeknisi">Pilih Nama Anda</label>
-            <select id="loginTeknisi" class="form-group">
-                <option value="">-- Pilih Nama Teknisi --</option>
-                <option value="Ridwan Mulyadi">Ridwan Mulyadi</option>
-                <option value="Aryan Wahyu Kusuma">Aryan Wahyu Kusuma</option>
-                <option value="M Rinofa Al Rasyid">M Rinofa Al Rasyid</option>
-                <option value="Ispa Wardani">Ispa Wardani</option>
-                <option value="Nur Awal Fadli">Nur Awal Fadli</option>
-                <option value="Araufu Jevian">Araufu Jevian</option>
-                <option value="I Dewa Putu Agustiantow Sukahet">I Dewa Putu Agustiantow Sukahet</option>
-                <option value="Dessa Putera Erlangga">Dessa Putera Erlangga</option>
-                <option value="Muhammad Fauzi">Muhammad Fauzi</option>
-                <option value="Dwi Pringgo">Dwi Pringgo Zubiantono</option>
-                <option value="Muhamad Wahyu">Muhammad Wahyu</option>
-                <option value="Arfan Affandi">Arfan Affandi</option>
-                <option value="Wahyu Mulaputra Maspeke">Wahyu Mulaputra Maspeke</option>
-                <option value="Sulaiman Sule">Sulaiman</option>
-                <option value="Fuja Rizky">Fuja Rizky Sahbana</option>
-                <option value="Yulli Ariyadi">Yulli Ariyadi</option>
-                <option value="Tatang Waula">Tatang Waula Nurwana</option>
-                <option value="Al-Faqr">Donny Cahyanto</option>
-                <option value="Budi Iskandar">Budi Iskandar</option>
-                <option value="Rangga Gusti Ananta">Rangga Gusti Ananta</option>
-                <option value="Rendy">Rendy Andika Saputra</option>
-                <option value="Edrian">Edrian Prasetyo Budi</option>
-                <option value="Wuryantoro">Wuryantoro Dany Kartiko</option>
-                <option value="M. Arif Tirtana">M. Arif Tirtana</option>
-                <option value="Syafuan">Syafuan Razidin</option>
-                <option value="Dunay">Rahmat Laduni</option>
-                <option value="Muh Habiballah">Muh Habiballah</option>
-                <option value="Syarifuddin">Syarifuddin Syah</option>
-                <option value="Julfikar Jafar">Julfikar Jafar</option>
-                <option value="Hanry Lekatompessy">Hanry Lekatompessy</option>
-                <option value="Mohammad Isra">Mohammad Isra</option>
-                <option value="Efraim Paga">Efraim Paga</option>
-                <option value="Ardiansyah">Ardiansyah Rangkuti</option>
-                <option value="Al Hidayat Jambak">Al Hidayat Jambak</option>
-                <option value="Apung Seftiawan">Apung Seftiawan</option>
-                <option value="Arie Listanto">Arie Listanto</option>
-                <option value="Antonius Kasmiaji">Antonius Kasmiaji</option>
-                <option value="Wawan Putrawana">Wawan Putrawana</option>
-                <option value="Muhammad Muhan Harhari">Muhammad Muhan Harhari</option>
-                <option value="Rahmat Hidayat">Rahmat Hidayat</option>
-            </select>
-            <button type="button" class="btn-submit" onclick="prosesLogin()">Masuk Dashboard</button>
+        <div>Status Login: <strong id="activeRole">-</strong></div>
+        <div id="logoutWrapper" style="display: none;">
+            <button class="btn-logout" onclick="prosesLogout()">Keluar (Logout)</button>
         </div>
     </div>
 
-    <!-- VIEW 2: DASHBOARD -->
-    <div id="viewDashboard" class="view-section">
-        <h2>Dashboard Teknisi</h2>
+    <!-- VIEW 1: HALAMAN LOGIN UTAMA -->
+    <div id="viewLogin" class="view-section active">
+        <h2>Login Portal Operasional</h2>
+        <div class="form-group" style="max-width: 400px; margin: 0 auto;">
+            <label for="loginUser">Username</label>
+            <input type="text" id="loginUser" placeholder="Masukkan username" class="form-group">
+
+            <label for="loginPass">Password</label>
+            <input type="password" id="loginPass" placeholder="Masukkan password" class="form-group">
+
+            <button type="button" class="btn-submit" onclick="prosesLogin()">Masuk</button>
+        </div>
+    </div>
+
+    <!-- VIEW 2: DASHBOARD TEKNISI (Tanpa Tabel) -->
+    <div id="viewTeknisi" class="view-section">
+        <h2>Dashboard Teknisi Lapangan</h2>
+        <p style="text-align: center; color: #666;">Silakan pilih kategori formulir yang ingin diisi:</p>
         <div class="menu-grid">
             <div class="menu-card" onclick="pilihForm('Form Visit')">📋 Form Visit</div>
             <div class="menu-card pendampingan" onclick="pilihForm('Form Pendampingan')">🤝 Form Pendampingan</div>
             <div class="menu-card uats" onclick="pilihForm('Form UAT')">✅ Form UAT</div>
         </div>
+    </div>
 
-        <div class="section-log">
+    <!-- VIEW 3: DASHBOARD ADMINISTRATOR (Dengan Tabel & Filter Bulan) -->
+    <div id="viewAdmin" class="view-section">
+        <h2>Dashboard Administrator</h2>
+        <div class="section-log" style="margin-top: 10px; border-top: none;">
             <div class="log-header">
                 <h3>Rekap Log Aktivitas Terpusat</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -113,74 +84,122 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Waktu</th>
-                            <th>Kategori</th>
-                            <th>Tanggal</th>
-                            <th>Teknisi</th>
-                            <th>Lokasi / Instansi</th>
-                            <th>Detail / PIC</th>
+                            <th>Timestamp</th>
+                            <th>Kategori Form</th>
+                            <th>Tanggal Visit</th>
+                            <th>Nama Teknisi</th>
+                            <th>Lokasi Visit</th>
+                            <th>Nomor Telp PIC</th>
+                            <th>Email PIC</th>
                         </tr>
                     </thead>
                     <tbody id="logTableBody">
-                        <tr><td colspan="6" style="text-align: center;">Memuat data...</td></tr>
+                        <tr><td colspan="7" style="text-align: center;">Memuat data...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- VIEW 3: FORM DINAMIS -->
+    <!-- VIEW 4: FORM INPUT DINAMIS -->
     <div id="viewForm" class="view-section">
-        <button class="btn-back" onclick="kembaliKeDashboard()">← Kembali ke Dashboard</button>
+        <button class="btn-back" onclick="kembaliKeDashboard()">← Kembali</button>
         <h2 id="formTitle">Formulir</h2>
 
         <form id="dynamicForm" onsubmit="submitForm(event)">
             <div class="form-group">
+                <label for="teknisi">Nama Teknisi</label>
+                <select id="teknisi" required>
+                    <option value="">-- Pilih Nama Teknisi --</option>
+                    <option value="Ridwan Mulyadi">Ridwan Mulyadi</option>
+                    <option value="Aryan Wahyu Kusuma">Aryan Wahyu Kusuma</option>
+                    <option value="M Rinofa Al Rasyid">M Rinofa Al Rasyid</option>
+                    <option value="Ispa Wardani">Ispa Wardani</option>
+                    <option value="Nur Awal Fadli">Nur Awal Fadli</option>
+                    <option value="Araufu Jevian">Araufu Jevian</option>
+                    <option value="I Dewa Putu Agustiantow Sukahet">I Dewa Putu Agustiantow Sukahet</option>
+                    <option value="Dessa Putera Erlangga">Dessa Putera Erlangga</option>
+                    <option value="Muhammad Fauzi">Muhammad Fauzi</option>
+                    <option value="Dwi Pringgo Zubiantono">Dwi Pringgo Zubiantono</option>
+                    <option value="Muhammad Wahyu">Muhammad Wahyu</option>
+                    <option value="Arfan Affandi">Arfan Affandi</option>
+                    <option value="Wahyu Mulaputra Maspeke">Wahyu Mulaputra Maspeke</option>
+                    <option value="Sulaiman">Sulaiman</option>
+                    <option value="Fuja Rizky Sahbana">Fuja Rizky Sahbana</option>
+                    <option value="Yulli Ariyadi">Yulli Ariyadi</option>
+                    <option value="Tatang Waula Nurwana">Tatang Waula Nurwana</option>
+                    <option value="Donny Cahyanto">Donny Cahyanto</option>
+                    <option value="Budi Iskandar">Budi Iskandar</option>
+                    <option value="Rangga Gusti Ananta">Rangga Gusti Ananta</option>
+                    <option value="Rendy Andika Saputra">Rendy Andika Saputra</option>
+                    <option value="Edrian Prasetyo Budi">Edrian Prasetyo Budi</option>
+                    <option value="Wuryantoro Dany Kartiko">Wuryantoro Dany Kartiko</option>
+                    <option value="M. Arif Tirtana">M. Arif Tirtana</option>
+                    <option value="Syafuan Razidin">Syafuan Razidin</option>
+                    <option value="Rahmat Laduni">Rahmat Laduni</option>
+                    <option value="Muh Habiballah">Muh Habiballah</option>
+                    <option value="Syarifuddin Syah">Syarifuddin Syah</option>
+                    <option value="Julfikar Jafar">Julfikar Jafar</option>
+                    <option value="Hanry Lekatompessy">Hanry Lekatompessy</option>
+                    <option value="Mohammad Isra">Mohammad Isra</option>
+                    <option value="Efraim Paga">Efraim Paga</option>
+                    <option value="Ardiansyah Rangkuti">Ardiansyah Rangkuti</option>
+                    <option value="Al Hidayat Jambak">Al Hidayat Jambak</option>
+                    <option value="Apung Seftiawan">Apung Seftiawan</option>
+                    <option value="Arie Listanto">Arie Listanto</option>
+                    <option value="Antonius Kasmiaji">Antonius Kasmiaji</option>
+                    <option value="Wawan Putrawana">Wawan Putrawana</option>
+                    <option value="Muhammad Muhan Harhari">Muhammad Muhan Harhari</option>
+                    <option value="Rahmat Hidayat">Rahmat Hidayat</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="lokasi" id="labelLokasi">Lokasi Visit</label>
                 <select id="lokasi" required>
                     <option value="">-- Pilih Lokasi --</option>
-                    <option value="KOJK Prov Jawa Barat | Bandung">KOJK Prov Jawa Barat</option>
-                    <option value="KOJK Prov Jawa Tengah | Semarang">KOJK Prov Jawa Tengah</option>
-                    <option value="KOJK Prov Jawa Timur| Surabaya">KOJK Prov Jawa Timur</option>
-                    <option value="KOJK Prov Sumatera Utara | Medan">KOJK Prov Sumatera Utara</option>
-                    <option value="KOJK Prov Sulawesi Selatan dan Sulawesi Barat | Makassar">KOJK Prov Sulawesi Selatan dan Sulawesi Barat</option>
-                    <option value="KOJK Prov Sumatera Selatan dan Bangka Belitung | Palembang">KOJK Prov Sumatera Selatan dan Bangka Belitung</option>
-                    <option value="KOJK Prov Bali | Denpasar">KOJK Prov Bali</option>
-                    <option value="KOJK Prov Kalimantan Timur dan Kalimantan Utara | Samarinda">KOJK Prov Kalimantan Timur dan Kalimantan Utara</option>
-                    <option value="Serang">KOJK Prov Banten</option>
-                    <option value="Yogyakarta">KOJK Prov Daerah Istimewa Yogyakarta</option>
-                    <option value="Padang">KOJK Prov Sumatera Barat</option>
-                    <option value="Pekanbaru">KOJK Prov Riau</option>
-                    <option value="Manado">KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara</option>
-                    <option value="Bandar Lampung">KOJK Prov Lampung</option>
-                    <option value="Banjarmasin">KOJK Prov Kalimantan Selatan</option>
-                    <option value="Cirebon">KOJK Prov Cirebon</option>
-                    <option value="Tasikmalaya">KOJK Prov Tasikmalaya</option>
-                    <option value="Solo">KOJK Prov Solo</option>
-                    <option value="Tegal">KOJK Prov Tegal</option>
-                    <option value="Purwokerto">KOJK Prov Purwokerto</option>
-                    <option value="Malang">KOJK Prov Malang</option>
-                    <option value="Kediri">KOJK Prov Kediri</option>
-                    <option value="Jember">KOJK Prov Jember</option>
-                    <option value="Banda Aceh">KOJK Prov Aceh</option>
-                    <option value="Batam">KOJK Prov Kepulauan Riau</option>
-                    <option value="Palu">KOJK Prov Sulawesi Tengah</option>
-                    <option value="Kendari">KOJK Prov Sulawesi Tenggara</option>
-                    <option value="Kendari Gd 2">KOJK Prov Sulawesi Tenggara Gedung 2</option>
-                    <option value="Ambon">KOJK Prov Maluku</option>
-                    <option value="Jayapura">KOJK Prov Papua</option>
-                    <option value="Jambi">KOJK Prov Jambi</option>
-                    <option value="Bengkulu">KOJK Prov Bengkulu</option>
-                    <option value="Mataram">KOJK Prov Nusa Tenggara Barat</option>
-                    <option value="Kupang">KOJK Prov Nusa Tenggara Timur</option>
-                    <option value="Pontianak">KOJK Prov Kalimantan Barat</option>
-                    <option value="Palangkaraya">KOJK Prov Kalimantan Tengah</option>
+                    <option value="KOJK Prov Jawa Barat">KOJK Prov Jawa Barat</option>
+                    <option value="KOJK Prov Jawa Tengah">KOJK Prov Jawa Tengah</option>
+                    <option value="KOJK Prov Jawa Timur">KOJK Prov Jawa Timur</option>
+                    <option value="KOJK Prov Sumatera Utara">KOJK Prov Sumatera Utara</option>
+                    <option value="KOJK Prov Sulawesi Selatan dan Sulawesi Barat">KOJK Prov Sulawesi Selatan dan Sulawesi Barat</option>
+                    <option value="KOJK Prov Sumatera Selatan dan Bangka Belitung">KOJK Prov Sumatera Selatan dan Bangka Belitung</option>
+                    <option value="KOJK Prov Bali">KOJK Prov Bali</option>
+                    <option value="KOJK Prov Kalimantan Timur dan Kalimantan Utara">KOJK Prov Kalimantan Timur dan Kalimantan Utara</option>
+                    <option value="KOJK Prov Banten">KOJK Prov Banten</option>
+                    <option value="KOJK Prov Daerah Istimewa Yogyakarta">KOJK Prov Daerah Istimewa Yogyakarta</option>
+                    <option value="KOJK Prov Sumatera Barat">KOJK Prov Sumatera Barat</option>
+                    <option value="KOJK Prov Riau">KOJK Prov Riau</option>
+                    <option value="KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara">KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara</option>
+                    <option value="KOJK Prov Lampung">KOJK Prov Lampung</option>
+                    <option value="KOJK Prov Kalimantan Selatan">KOJK Prov Kalimantan Selatan</option>
+                    <option value="KOJK Prov Cirebon">KOJK Prov Cirebon</option>
+                    <option value="KOJK Prov Tasikmalaya">KOJK Prov Tasikmalaya</option>
+                    <option value="KOJK Prov Solo">KOJK Prov Solo</option>
+                    <option value="KOJK Prov Tegal">KOJK Prov Tegal</option>
+                    <option value="KOJK Prov Purwokerto">KOJK Prov Purwokerto</option>
+                    <option value="KOJK Prov Malang">KOJK Prov Malang</option>
+                    <option value="KOJK Prov Kediri">KOJK Prov Kediri</option>
+                    <option value="KOJK Prov Jember">KOJK Prov Jember</option>
+                    <option value="KOJK Prov Aceh">KOJK Prov Aceh</option>
+                    <option value="KOJK Prov Kepulauan Riau">KOJK Prov Kepulauan Riau</option>
+                    <option value="KOJK Prov Sulawesi Tengah">KOJK Prov Sulawesi Tengah</option>
+                    <option value="KOJK Prov Sulawesi Tenggara">KOJK Prov Sulawesi Tenggara</option>
+                    <option value="KOJK Prov Sulawesi Tenggara Gedung 2">KOJK Prov Sulawesi Tenggara Gedung 2</option>
+                    <option value="KOJK Prov Maluku">KOJK Prov Maluku</option>
+                    <option value="KOJK Prov Papua">KOJK Prov Papua</option>
+                    <option value="KOJK Prov Jambi">KOJK Prov Jambi</option>
+                    <option value="KOJK Prov Bengkulu">KOJK Prov Bengkulu</option>
+                    <option value="KOJK Prov Nusa Tenggara Barat">KOJK Prov Nusa Tenggara Barat</option>
+                    <option value="KOJK Prov Nusa Tenggara Timur">KOJK Prov Nusa Tenggara Timur</option>
+                    <option value="KOJK Prov Kalimantan Barat">KOJK Prov Kalimantan Barat</option>
+                    <option value="KOJK Prov Kalimantan Tengah">KOJK Prov Kalimantan Tengah</option>
                     <option value="Gedung Arsip Salemba">Gedung Arsip Salemba</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="tanggal">Tanggal Kegiatan</label>
+                <label for="tanggal">Tanggal Visit</label>
                 <input type="date" id="tanggal" required>
             </div>
 
@@ -191,7 +210,7 @@
                     <input type="text" id="pic" placeholder="Nama PIC di lokasi">
                 </div>
                 <div class="form-group">
-                    <label for="telp">No Telepon PIC</label>
+                    <label for="telp">Nomor Telp PIC</label>
                     <input type="tel" id="telp" placeholder="08xxxxxxxxxx">
                 </div>
                 <div class="form-group">
@@ -203,8 +222,8 @@
             <!-- Field Khusus Pendampingan -->
             <div id="pendampinganFields" style="display: none;">
                 <div class="form-group">
-                    <label for="detail">Nama / Deskripsi Kegiatan</label>
-                    <textarea id="detail" rows="3" placeholder="Tuliskan detail kegiatan pendampingan..."></textarea>
+                    <label for="detail">Detail Acara / Kegiatan</label>
+                    <textarea id="detail" rows="3" placeholder="Tuliskan detail acara pendampingan..."></textarea>
                 </div>
             </div>
 
@@ -214,29 +233,51 @@
 </div>
 
 <script>
-    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT DI SINI:
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzEccCcAImqWvWSCRFTigDhHETagTOaRlzFcoFglLGGUOo-rPKV5pKZlxMbspLcK97R/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2okXb-_rcWiQerWtyIDjDsWYFQkfj5Wy9uhGl08Eb74rzeeaNAzPlG_70KrfsTuQr/exec";
+    const SECRET_TOKEN = "MiftahTeknisi2026SecureKey";
     
-    // Konfigurasi Telegram
     const TELEGRAM_BOT_TOKEN = "8886255384:AAGaf0Rcdu5-I9O-wFXOixyk3rlSRBwgY0s";
     const TELEGRAM_CHAT_ID = "-1004352471713";
 
-    let currentUser = "";
+    let currentRole = "";
     let currentKategori = "";
     let logData = [];
 
     window.onload = function() {
         document.getElementById('filterBulan').value = new Date().toISOString().slice(0, 7);
-        fetchDataFromCloud();
     };
 
     function prosesLogin() {
-        const nama = document.getElementById('loginTeknisi').value;
-        if (!nama) { alert("Pilih nama dulu!"); return; }
-        currentUser = nama;
-        document.getElementById('activeTechnician').innerText = currentUser;
-        gantiView('viewDashboard');
-        fetchDataFromCloud();
+        const user = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+
+        if (user === "admin" && pass === "TeknisiVisit") {
+            currentRole = "Teknisi";
+            document.getElementById('activeRole').innerText = "Teknisi Lapangan";
+            document.getElementById('logoutWrapper').style.display = 'block';
+            document.getElementById('loginUser').value = "";
+            document.getElementById('loginPass').value = "";
+            gantiView('viewTeknisi');
+        } else if (user === "admin" && pass === "miftah1234") {
+            currentRole = "Administrator";
+            document.getElementById('activeRole').innerText = "Administrator";
+            document.getElementById('logoutWrapper').style.display = 'block';
+            document.getElementById('loginUser').value = "";
+            document.getElementById('loginPass').value = "";
+            gantiView('viewAdmin');
+            fetchDataFromCloud();
+        } else {
+            alert("Username atau Password salah!");
+        }
+    }
+
+    function prosesLogout() {
+        if (confirm("Apakah Anda yakin ingin keluar?")) {
+            currentRole = "";
+            document.getElementById('activeRole').innerText = "-";
+            document.getElementById('logoutWrapper').style.display = 'none';
+            gantiView('viewLogin');
+        }
     }
 
     function gantiView(viewId) {
@@ -250,7 +291,7 @@
         document.getElementById('dynamicForm').reset();
 
         if (kategori === 'Form Pendampingan') {
-            document.getElementById('labelLokasi').innerText = "Lokasi Kegiatan";
+            document.getElementById('labelLokasi').innerText = "Lokasi Visit";
             document.getElementById('picFields').style.display = 'none';
             document.getElementById('pendampinganFields').style.display = 'block';
             document.getElementById('pic').removeAttribute('required');
@@ -271,17 +312,24 @@
     }
 
     function kembaliKeDashboard() {
-        gantiView('viewDashboard');
-        fetchDataFromCloud();
+        if (currentRole === "Administrator") {
+            gantiView('viewAdmin');
+            fetchDataFromCloud();
+        } else {
+            gantiView('viewTeknisi');
+        }
     }
 
     function fetchDataFromCloud() {
         if (WEB_APP_URL.includes("SALIN_URL")) return;
-        fetch(WEB_APP_URL)
+        
+        fetch(`${WEB_APP_URL}?token=${SECRET_TOKEN}`)
             .then(res => res.json())
             .then(data => {
-                logData = data;
-                renderTable();
+                if (Array.isArray(data)) {
+                    logData = data;
+                    renderTable();
+                }
             })
             .catch(err => console.error(err));
     }
@@ -292,10 +340,11 @@
         const timestamp = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
 
         const payload = {
+            token: SECRET_TOKEN,
             timestamp: timestamp,
             kategori: currentKategori,
             tanggal: document.getElementById('tanggal').value,
-            teknisi: currentUser,
+            teknisi: document.getElementById('teknisi').value,
             lokasi: document.getElementById('lokasi').value,
             pic: document.getElementById('pic').value,
             telp: document.getElementById('telp').value,
@@ -310,7 +359,27 @@
             body: JSON.stringify(payload)
         }).then(() => {
             kirimTelegram(payload);
-            alert(`${currentKategori} Berhasil mengirim data!`);
+            
+            // TAMPILKAN POP-UP BERDASARKAN KATEGORI FORM
+            if (payload.kategori === "Form Pendampingan") {
+                alert(`✅ Data Berhasil Disubmit!\n\n` +
+                      `Nama Teknisi: ${payload.teknisi}\n` +
+                      `Tanggal Visit: ${payload.tanggal}\n` +
+                      `Lokasi Visit: ${payload.lokasi}\n` +
+                      `Detail Acara: ${payload.detail}\n` +
+                      `Waktu Pengajuan Form: ${payload.timestamp}`);
+            } else {
+                alert(`✅ Data Berhasil Disubmit!\n\n` +
+                      `Kategori Form: ${payload.kategori}\n` +
+                      `Nama Teknisi: ${payload.teknisi}\n` +
+                      `Tanggal Visit: ${payload.tanggal}\n` +
+                      `Lokasi Visit: ${payload.lokasi}\n` +
+                      `Nama PIC: ${payload.pic}\n` +
+                      `Nomor Telp PIC: ${payload.telp}\n` +
+                      `Email PIC: ${payload.email}\n` +
+                      `Waktu Pengajuan Form: ${payload.timestamp}`);
+            }
+
             kembaliKeDashboard();
         }).catch(err => alert("Gagal mengirim data."));
     }
@@ -320,17 +389,18 @@
 
         let pesanDetail = "";
         if (data.kategori === "Form Pendampingan") {
-            pesanDetail = `📝 *Kegiatan:* ${data.detail}`;
+            pesanDetail = `📝 *Detail Acara:* ${data.detail}`;
         } else {
-            pesanDetail = `👤 *PIC:* ${data.pic} (${data.telp})\n📧 *Email:* ${data.email}`;
+            pesanDetail = `👤 *Nama PIC:* ${data.pic}\n📞 *Nomor Telp PIC:* ${data.telp}\n📧 *Email PIC:* ${data.email}`;
         }
 
         const pesan = `🚨 *NOTIFIKASI ${data.kategori.toUpperCase()}* 🚨\n\n` +
-                      `👨‍💻 *Teknisi:* ${data.teknisi}\n` +
-                      `🏢 *Lokasi:* ${data.lokasi}\n` +
-                      `📅 *Tanggal:* ${data.tanggal}\n` +
-                      `${pesanDetail}\n\n` +
-                      `⏰ *Waktu:* ${data.timestamp}`;
+                      `Kategori Form: ${data.kategori}\n` +
+                      `Nama Teknisi: ${data.teknisi}\n` +
+                      `Tanggal Visit: ${data.tanggal}\n` +
+                      `Lokasi Visit: ${data.lokasi}\n` +
+                      `${pesanDetail}\n` +
+                      `Waktu Pengajuan Form: ${data.timestamp}`;
         
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -346,12 +416,14 @@
 
         const filtered = logData.filter(i => i.tanggal && i.tanggal.startsWith(filterBulan));
         if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Tidak ada data bulan ini</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Tidak ada data bulan ini</td></tr>';
             return;
         }
 
         filtered.forEach(i => {
-            const detailInfo = i.kategori === 'Form Pendampingan' ? `Kegiatan: ${i.detail}` : `PIC: ${i.pic} (${i.telp})`;
+            const telpVal = (i.kategori === 'Form Pendampingan') ? '-' : (i.telp || '-');
+            const emailVal = (i.kategori === 'Form Pendampingan') ? '-' : (i.email || '-');
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${i.timestamp}</td>
@@ -359,7 +431,8 @@
                 <td>${i.tanggal}</td>
                 <td>${i.teknisi}</td>
                 <td>${i.lokasi}</td>
-                <td>${detailInfo}</td>
+                <td>${telpVal}</td>
+                <td>${emailVal}</td>
             `;
             tbody.appendChild(row);
         });
