@@ -235,7 +235,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Submit</button>
+            <button type="submit" id="btnSubmitForm" class="btn-submit">Submit</button>
         </form>
     </div>
 </div>
@@ -355,13 +355,14 @@
     function submitForm(e) {
         e.preventDefault();
         
-        // Memilih secara spesifik tombol submit di dalam form yang sedang aktif
-        const submitBtn = e.target.querySelector('button[type="submit"]');
+        // Menggunakan ID khusus agar tepat sasaran ke tombol form
+        const submitBtn = document.getElementById('btnSubmitForm');
         const originalText = submitBtn.innerText;
         
-        // Ubah tombol jadi mode loading & non-aktifkan
+        // Ubah tombol jadi mode loading & ubah warna
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `⏳ Mengirim Data...`;
+        submitBtn.style.backgroundColor = "#7f8c8d";
+        submitBtn.innerText = "⏳ Mengirim Data...";
 
         const now = new Date();
         const timestamp = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
@@ -396,6 +397,7 @@
             
             // Kembalikan tombol ke kondisi semula
             submitBtn.disabled = false;
+            submitBtn.style.backgroundColor = "#2c3e50";
             submitBtn.innerText = originalText;
 
             let popupHTML = "";
@@ -447,8 +449,8 @@
             });
 
         }).catch(err => {
-            // Jika gagal, kembalikan tombol ke semula dan beri peringatan
             submitBtn.disabled = false;
+            submitBtn.style.backgroundColor = "#2c3e50";
             submitBtn.innerText = originalText;
             alert("Gagal mengirim data.");
         });
