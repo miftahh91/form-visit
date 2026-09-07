@@ -355,8 +355,8 @@
     function submitForm(e) {
         e.preventDefault();
         
-        // Ambil elemen tombol submit
-        const submitBtn = document.querySelector('.btn-submit');
+        // Memilih secara spesifik tombol submit di dalam form yang sedang aktif
+        const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerText;
         
         // Ubah tombol jadi mode loading & non-aktifkan
@@ -409,7 +409,7 @@
                         <b>Waktu Pengajuan:</b> ${payload.timestamp}
                         <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
                         <div style="text-align: center; color: #e74c3c; font-weight: bold;">
-                            📱 Silahkan Capture & Share ke Grup
+                            📱 Silahkan Capture Pop Up Ini & Share ke Grup
                         </div>
                     </div>
                 `;
@@ -426,14 +426,14 @@
                         <b>Waktu Pengajuan:</b> ${payload.timestamp}
                         <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
                         <div style="text-align: center; color: #e74c3c; font-weight: bold;">
-                            📱 Silahkan Capture & Share ke Grup
+                            📱 Silahkan Capture Pop Up Ini & Share ke Grup
                         </div>
                     </div>
                 `;
             }
 
             Swal.fire({
-                title: 'Data Berhasil Di Submit !',
+                title: 'Data Berhasil Disubmit!',
                 html: popupHTML,
                 icon: 'success',
                 confirmButtonText: 'OK',
@@ -453,7 +453,6 @@
             alert("Gagal mengirim data.");
         });
     }
-
     function kirimTelegram(data) {
         if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
 
