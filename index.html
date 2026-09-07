@@ -34,6 +34,7 @@
         .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #7f8c8d; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .btn-logout { background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -360,27 +361,48 @@
         }).then(() => {
             kirimTelegram(payload);
             
-            // TAMPILKAN POP-UP BERDASARKAN KATEGORI FORM
+            // --- MULAI BAGIAN YANG DIGANTI ---
+            let popupHTML = "";
             if (payload.kategori === "Form Pendampingan") {
-                alert(`✅ Data Berhasil Disubmit!\n\n` +
-                      `Nama Teknisi: ${payload.teknisi}\n` +
-                      `Tanggal Visit: ${payload.tanggal}\n` +
-                      `Lokasi Visit: ${payload.lokasi}\n` +
-                      `Detail Acara: ${payload.detail}\n` +
-                      `Waktu Pengajuan Form: ${payload.timestamp}`);
+                popupHTML = `
+                    <div style="text-align: left; font-size: 14px; line-height: 1.6; word-wrap: break-word;">
+                        <b>Nama Teknisi:</b> ${payload.teknisi}<br>
+                        <b>Tanggal Visit:</b> ${payload.tanggal}<br>
+                        <b>Lokasi Visit:</b> ${payload.lokasi}<br>
+                        <b>Detail Acara:</b> ${payload.detail}<br>
+                        <b>Waktu Pengajuan:</b> ${payload.timestamp}
+                    </div>
+                `;
             } else {
-                alert(`✅ Data Berhasil Disubmit!\n\n` +
-                      `Kategori Form: ${payload.kategori}\n` +
-                      `Nama Teknisi: ${payload.teknisi}\n` +
-                      `Tanggal Visit: ${payload.tanggal}\n` +
-                      `Lokasi Visit: ${payload.lokasi}\n` +
-                      `Nama PIC: ${payload.pic}\n` +
-                      `Nomor Telp PIC: ${payload.telp}\n` +
-                      `Email PIC: ${payload.email}\n` +
-                      `Waktu Pengajuan Form: ${payload.timestamp}`);
+                popupHTML = `
+                    <div style="text-align: left; font-size: 14px; line-height: 1.6; word-wrap: break-word;">
+                        <b>Kategori Form:</b> ${payload.kategori}<br>
+                        <b>Nama Teknisi:</b> ${payload.teknisi}<br>
+                        <b>Tanggal Visit:</b> ${payload.tanggal}<br>
+                        <b>Lokasi Visit:</b> ${payload.lokasi}<br>
+                        <b>Nama PIC:</b> ${payload.pic}<br>
+                        <b>Nomor Telp PIC:</b> ${payload.telp}<br>
+                        <b>Email PIC:</b> ${payload.email}<br>
+                        <b>Waktu Pengajuan:</b> ${payload.timestamp}
+                    </div>
+                `;
             }
 
-            kembaliKeDashboard();
+            Swal.fire({
+                title: 'Data Berhasil Disubmit!',
+                html: popupHTML,
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#2c3e50',
+                width: 'auto',
+                padding: '1.5em'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    kembaliKeDashboard();
+                }
+            });
+            // --- SELESAI BAGIAN YANG DIGANTI ---
+
         }).catch(err => alert("Gagal mengirim data."));
     }
 
