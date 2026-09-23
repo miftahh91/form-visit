@@ -366,11 +366,9 @@
     function submitForm(e) {
         e.preventDefault();
         
-        // Menggunakan ID khusus agar tepat sasaran ke tombol form
         const submitBtn = document.getElementById('btnSubmitForm');
         const originalText = submitBtn.innerText;
         
-        // Ubah tombol jadi mode loading & ubah warna
         submitBtn.disabled = true;
         submitBtn.style.backgroundColor = "#7f8c8d";
         submitBtn.innerText = "⏳ Mengirim Data...";
@@ -400,25 +398,22 @@
 
         fetch(WEB_APP_URL, {
             method: 'POST',
-            // mode: 'no-cors', <--- KITA HAPUS INI AGAR BISA BACA BALASAN GOOGLE SCRIPT
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // UBAH KE TEXT AGAR AMAN DARI BLOKIR CORS
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         })
-        .then(res => res.json()) // <--- Sekarang web sudah bisa membaca balasan JSON
+        .then(res => res.json())
         .then(response => {
-            // Tangkap data EOS dan Telegram dari respon Google Script
             let namaEos = response.eos || "-";
             let tagEos = response.tele_eos || "";
+            let rowBaru = response.row || 0; // <--- Menangkap posisi baris database
 
-            // Kirim notif Telegram lengkap dengan Tag & Tombol
-            kirimTelegram(payload, namaEos, tagEos);
+            // Kirim notif Telegram lengkap dengan Tag & Posisi Baris
+            kirimTelegram(payload, namaEos, tagEos, rowBaru);
             
-            // Kembalikan tombol ke kondisi semula
             submitBtn.disabled = false;
             submitBtn.style.backgroundColor = "#2c3e50";
             submitBtn.innerText = originalText;
 
-            // --- TAMBAHAN EOS KE POP-UP ---
             let popupHTML = "";
             if (payload.kategori === "Form Pendampingan") {
                 popupHTML = `
@@ -476,6 +471,49 @@
             submitBtn.innerText = originalText;
             alert("Gagal mengirim data.");
         });
+    }
+
+    // Fungsi Kirim Telegram
+    function kirimTelegram(data, namaEos, tagEos, rowBaru) {
+        if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
+
+        let pesanDetail = "";
+        if (data.kategori === "Form Pendampingan") {
+            pesanDetail = `📝 *Detail Acara:* ${data.detail}`;
+        } else {
+            pesanDetail = `👤 *Nama PIC:* ${data.pic}\n📞 *Nomor Telp PIC:* ${data.telp}\n📧 *Email PIC:* ${data.email}`;
+        }
+
+        let infoEos = `*EOS Pendamping:* ${namaEos}`;
+        if (tagEos !== "") {
+            infoEos += ` (${tagEos})`; 
+        }
+
+        const pesan = `🚨 *NOTIFIKASI ${data.kategori.toUpperCase()}* 🚨\n\n` +
+                      `Kategori Form: ${data.kategori}\n` +
+                      `Nama Teknisi: ${data.teknisi}\n` +
+                      `Tanggal Visit: ${data.tanggal}\n` +
+                      `Lokasi Visit: ${data.lokasi}\n` +
+                      `${pesanDetail}\n` +
+                      `👷 ${infoEos}\n` +
+                      `Waktu Pengajuan: ${data.timestamp}`;
+        
+        const inlineKeyboard = {
+            inline_keyboard: [
+                [{ text: "✅ Sudah Email", callback_data: `sudah_${data.kategori}_${rowBaru}` }] 
+            ]
+        };
+        
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chat_id: TELEGRAM_CHAT_ID, 
+                text: pesan, 
+                parse_mode: 'Markdown',
+                reply_markup: inlineKeyboard
+            })
+        }).catch(err => console.log(err));
     }
 
     // Fungsi Kirim Telegram (Diupdate dengan Parameter EOS dan Tombol)
