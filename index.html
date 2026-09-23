@@ -250,7 +250,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyZzbphvRIFvPTyDTd9DbW5UNSrWKF552BoyztY74r2V6kvpp08AcZCdlnjwE_b72A_/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxbielASAHKeLvBO7mT5YJGAtEOt1MLzQgoln46vP3TH1kXHCHVroUYjJJOiGFpgtAN/exec";
     const SECRET_TOKEN = "MiftahTeknisi2026SecureKey";
     
     const TELEGRAM_BOT_TOKEN = "8886255384:AAGaf0Rcdu5-I9O-wFXOixyk3rlSRBwgY0s";
@@ -398,17 +398,25 @@
 
         fetch(WEB_APP_URL, {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            // mode: 'no-cors', <--- KITA HAPUS INI AGAR BISA BACA BALASAN GOOGLE SCRIPT
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // UBAH KE TEXT AGAR AMAN DARI BLOKIR CORS
             body: JSON.stringify(payload)
-        }).then(() => {
-            kirimTelegram(payload);
+        })
+        .then(res => res.json()) // <--- Sekarang web sudah bisa membaca balasan JSON
+        .then(response => {
+            // Tangkap data EOS dan Telegram dari respon Google Script
+            let namaEos = response.eos || "-";
+            let tagEos = response.tele_eos || "";
+
+            // Kirim notif Telegram lengkap dengan Tag & Tombol
+            kirimTelegram(payload, namaEos, tagEos);
             
             // Kembalikan tombol ke kondisi semula
             submitBtn.disabled = false;
             submitBtn.style.backgroundColor = "#2c3e50";
             submitBtn.innerText = originalText;
 
+            // --- TAMBAHAN EOS KE POP-UP ---
             let popupHTML = "";
             if (payload.kategori === "Form Pendampingan") {
                 popupHTML = `
@@ -417,6 +425,7 @@
                         <b>Tanggal Visit:</b> ${payload.tanggal}<br>
                         <b>Lokasi Visit:</b> ${payload.lokasi}<br>
                         <b>Detail Acara:</b> ${payload.detail}<br>
+                        <b>EOS Pendamping:</b> <span style="color:#2980b9; font-weight:bold;">${namaEos}</span><br>
                         <b>Waktu Pengajuan:</b> ${payload.timestamp}
                         <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
                         <div style="text-align: center; color: #e74c3c; font-weight: bold;">
@@ -434,6 +443,7 @@
                         <b>Nama PIC:</b> ${payload.pic}<br>
                         <b>Nomor Telp PIC:</b> ${payload.telp}<br>
                         <b>Email PIC:</b> ${payload.email}<br>
+                        <b>EOS Pendamping:</b> <span style="color:#2980b9; font-weight:bold;">${namaEos}</span><br>
                         <b>Waktu Pengajuan:</b> ${payload.timestamp}
                         <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
                         <div style="text-align: center; color: #e74c3c; font-weight: bold;">
@@ -458,13 +468,16 @@
             });
 
         }).catch(err => {
+            console.error(err);
             submitBtn.disabled = false;
             submitBtn.style.backgroundColor = "#2c3e50";
             submitBtn.innerText = originalText;
             alert("Gagal mengirim data.");
         });
     }
-    function kirimTelegram(data) {
+
+    // Fungsi Kirim Telegram (Diupdate dengan Parameter EOS dan Tombol)
+    function kirimTelegram(data, namaEos, tagEos) {
         if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
 
         let pesanDetail = "";
@@ -474,18 +487,37 @@
             pesanDetail = `👤 *Nama PIC:* ${data.pic}\n📞 *Nomor Telp PIC:* ${data.telp}\n📧 *Email PIC:* ${data.email}`;
         }
 
+        // Susun Baris EOS & Tag Telegram
+        let infoEos = `*EOS Pendamping:* ${namaEos}`;
+        if (tagEos !== "") {
+            infoEos += ` (${tagEos})`; // Akan jadi: EOS Pendamping: Miftah (@miftahH_91)
+        }
+
         const pesan = `🚨 *NOTIFIKASI ${data.kategori.toUpperCase()}* 🚨\n\n` +
                       `Kategori Form: ${data.kategori}\n` +
                       `Nama Teknisi: ${data.teknisi}\n` +
                       `Tanggal Visit: ${data.tanggal}\n` +
                       `Lokasi Visit: ${data.lokasi}\n` +
                       `${pesanDetail}\n` +
-                      `Waktu Pengajuan Form: ${data.timestamp}`;
+                      `👷 ${infoEos}\n` +
+                      `Waktu Pengajuan: ${data.timestamp}`;
+        
+        // --- BUAT TOMBOL INLINE TELEGRAM ---
+        const inlineKeyboard = {
+            inline_keyboard: [
+                [{ text: "✅ Sudah Email", callback_data: "sudah_email_btn" }]
+            ]
+        };
         
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: pesan, parse_mode: 'Markdown' })
+            body: JSON.stringify({ 
+                chat_id: TELEGRAM_CHAT_ID, 
+                text: pesan, 
+                parse_mode: 'Markdown',
+                reply_markup: inlineKeyboard // <--- Suntikkan tombolnya ke sini!
+            })
         }).catch(err => console.log(err));
     }
 
