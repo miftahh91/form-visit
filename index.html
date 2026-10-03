@@ -158,7 +158,6 @@
                     <option value="Wawan Putrawana">Wawan Putrawana</option>
                     <option value="Muhammad Muhan Harhari">Muhammad Muhan Harhari</option>
                     <option value="Rahmat Hidayat">Rahmat Hidayat</option>
-                    <option value="Miftahuddin">Miftah</option>
                 </select>
             </div>
 
@@ -207,7 +206,6 @@
                     <option value="KOJK Prov Kalimantan Barat">KOJK Prov Kalimantan Barat</option>
                     <option value="KOJK Prov Kalimantan Tengah">KOJK Prov Kalimantan Tengah</option>
                     <option value="Gedung Arsip Salemba">Gedung Arsip Salemba</option>
-                    <option value="Gudang DC Cakung">DC Cakung</option>
                 </select>
             </div>
 
@@ -277,7 +275,7 @@
             document.getElementById('loginUser').value = "";
             document.getElementById('loginPass').value = "";
             gantiView('viewTeknisi');
-        } else if (user === "admin" && pass === "miftah1234") {
+        } else if (user === "admin" && pass === "miftaheostelkom") {
             currentRole = "Administrator";
             document.getElementById('activeRole').innerText = "Administrator";
             document.getElementById('logoutWrapper').style.display = 'block';
@@ -500,7 +498,7 @@
         
         const inlineKeyboard = {
             inline_keyboard: [
-                [{ text: "✅ Sudah Email", callback_data: `sudah_${data.kategori}_${rowBaru}` }] 
+                [{ text: "📧 Kirim Email", url: "https://webmail.governmentservice.id/" }] 
             ]
         };
         
