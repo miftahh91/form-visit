@@ -497,13 +497,13 @@
                       `Waktu Pengajuan: ${data.timestamp}`;
         
         const inlineKeyboard = {
-            inline_keyboard: [
-                [
-                    { text: "📧 Kirim Email", url: "https://webmail.governmentservice.id/" },
-                    { text: "✅ Sudah Email", callback_data: `sudah_${data.kategori}_${rowBaru}` }
-                ] 
-            ]
-        };
+    inline_keyboard: [
+        [
+            { text: "📧 Kirim Email", url: "https://webmail.governmentservice.id/" },
+            { text: "✅ Sudah Email", callback_data: `sudah_${data.kategori}_${rowBaru}` }
+        ] 
+    ]
+};
         
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
