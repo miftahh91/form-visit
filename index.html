@@ -471,23 +471,23 @@
         });
     }
 
-    // Fungsi Kirim Telegram (Yang Benar dan Sudah Diperbaiki)
+    // Fungsi Kirim Telegram (Yang Benar dan Sudah Diperbaiki Menggunakan HTML)
     function kirimTelegram(data, namaEos, tagEos, rowBaru) {
         if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
 
         let pesanDetail = "";
         if (data.kategori === "Form Pendampingan") {
-            pesanDetail = `📝 *Detail Acara:* ${data.detail}`;
+            pesanDetail = `📝 <b>Detail Acara:</b> ${data.detail}`;
         } else {
-            pesanDetail = `👤 *Nama PIC:* ${data.pic}\n📞 *Nomor Telp PIC:* ${data.telp}\n📧 *Email PIC:* ${data.email}`;
+            pesanDetail = `👤 <b>Nama PIC:</b> ${data.pic}\n📞 <b>Nomor Telp PIC:</b> ${data.telp}\n📧 <b>Email PIC:</b> ${data.email}`;
         }
 
-        let infoEos = `*EOS Pendamping:* ${namaEos}`;
+        let infoEos = `<b>EOS Pendamping:</b> ${namaEos}`;
         if (tagEos !== "") {
             infoEos += ` (${tagEos})`; 
         }
 
-        const pesan = `🚨 *NOTIFIKASI ${data.kategori.toUpperCase()}* 🚨\n\n` +
+        const pesan = `🚨 <b>NOTIFIKASI ${data.kategori.toUpperCase()}</b> 🚨\n\n` +
                       `Kategori Form: ${data.kategori}\n` +
                       `Nama Teknisi: ${data.teknisi}\n` +
                       `Tanggal Visit: ${data.tanggal}\n` +
@@ -511,7 +511,7 @@
             body: JSON.stringify({ 
                 chat_id: TELEGRAM_CHAT_ID, 
                 text: pesan, 
-                parse_mode: 'Markdown',
+                parse_mode: 'HTML', // <--- KITA UBAH JADI HTML AGAR LEBIH AMAN
                 reply_markup: inlineKeyboard
             })
         }).catch(err => console.log(err));
