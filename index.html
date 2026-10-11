@@ -361,118 +361,71 @@
             .catch(err => console.error(err));
     }
 
-    function submitForm(e) {
-        e.preventDefault();
+    // ==============================================================
+    // FUNGSI SUBMIT FORM KE GOOGLE APPS SCRIPT
+    // ==============================================================
+    function submitForm(event) {
+        event.preventDefault();
         
-        const submitBtn = document.getElementById('btnSubmitForm');
-        const originalText = submitBtn.innerText;
-        
-        submitBtn.disabled = true;
-        submitBtn.style.backgroundColor = "#7f8c8d";
-        submitBtn.innerText = "⏳ Mengirim Data...";
-
-        const now = new Date();
-        const timestamp = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
-
-        let lokasiValue = "";
-        if (currentKategori === 'Form Pendampingan') {
-            lokasiValue = document.getElementById('lokasiInput').value.trim();
-        } else {
-            lokasiValue = document.getElementById('lokasiSelect').value;
-        }
+        Swal.fire({
+            title: 'Mengirim Data...',
+            text: 'Mohon tunggu sebentar',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
 
         const payload = {
             token: SECRET_TOKEN,
-            timestamp: timestamp,
             kategori: currentKategori,
-            tanggal: document.getElementById('tanggal').value,
             teknisi: document.getElementById('teknisi').value,
-            lokasi: lokasiValue,
-            pic: document.getElementById('pic').value,
-            telp: document.getElementById('telp').value,
-            email: document.getElementById('email').value,
-            detail: document.getElementById('detail').value
+            tanggal: document.getElementById('tanggal').value,
+            timestamp: new Date().toLocaleString('id-ID')
         };
+
+        if (currentKategori === "Form Pendampingan") {
+            payload.lokasi = document.getElementById('lokasiInput').value;
+            payload.detail = document.getElementById('detail').value;
+        } else {
+            payload.lokasi = document.getElementById('lokasiSelect').value;
+            payload.pic = document.getElementById('pic').value;
+            payload.telp = document.getElementById('telp').value;
+            payload.email = document.getElementById('email').value;
+        }
 
         fetch(WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         })
         .then(res => res.json())
         .then(response => {
-            let namaEos = response.eos || "-";
-            let tagEos = response.tele_eos || "";
-            let rowBaru = response.row || 0; 
+            Swal.close();
+            if (response.result === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data berhasil disimpan ke database.',
+                    confirmButtonColor: '#2c3e50'
+                });
 
-            // Kirim notif Telegram lengkap dengan Tag & Posisi Baris
-            kirimTelegram(payload, namaEos, tagEos, rowBaru);
-            
-            submitBtn.disabled = false;
-            submitBtn.style.backgroundColor = "#2c3e50";
-            submitBtn.innerText = originalText;
-
-            let popupHTML = "";
-            if (payload.kategori === "Form Pendampingan") {
-                popupHTML = `
-                    <div style="text-align: left; font-size: 14px; line-height: 1.6; word-wrap: break-word;">
-                        <b>Nama Teknisi:</b> ${payload.teknisi}<br>
-                        <b>Tanggal Visit:</b> ${payload.tanggal}<br>
-                        <b>Lokasi Visit:</b> ${payload.lokasi}<br>
-                        <b>Detail Acara:</b> ${payload.detail}<br>
-                        <b>EOS Pendamping:</b> <span style="color:#2980b9; font-weight:bold;">${namaEos}</span><br>
-                        <b>Waktu Pengajuan:</b> ${payload.timestamp}
-                        <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
-                        <div style="text-align: center; color: #e74c3c; font-weight: bold;">
-                            📱 Silahkan Capture & Share ke Grup
-                        </div>
-                    </div>
-                `;
+                // Panggil notifikasi Telegram dengan tambahan parameter tele_id
+                kirimTelegram(payload, response.eos, response.tele_eos, response.tele_id, response.row);
+                
+                document.getElementById('dynamicForm').reset();
+                kembaliKeDashboard();
             } else {
-                popupHTML = `
-                    <div style="text-align: left; font-size: 14px; line-height: 1.6; word-wrap: break-word;">
-                        <b>Kategori Form:</b> ${payload.kategori}<br>
-                        <b>Nama Teknisi:</b> ${payload.teknisi}<br>
-                        <b>Tanggal Visit:</b> ${payload.tanggal}<br>
-                        <b>Lokasi Visit:</b> ${payload.lokasi}<br>
-                        <b>Nama PIC:</b> ${payload.pic}<br>
-                        <b>Nomor Telp PIC:</b> ${payload.telp}<br>
-                        <b>Email PIC:</b> ${payload.email}<br>
-                        <b>EOS Pendamping:</b> <span style="color:#2980b9; font-weight:bold;">${namaEos}</span><br>
-                        <b>Waktu Pengajuan:</b> ${payload.timestamp}
-                        <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
-                        <div style="text-align: center; color: #e74c3c; font-weight: bold;">
-                            📱 Silahkan Capture & Share ke Grup
-                        </div>
-                    </div>
-                `;
+                Swal.fire('Error', 'Gagal menyimpan data: ' + response.error, 'error');
             }
-
-            Swal.fire({
-                title: 'Data Berhasil Disubmit!',
-                html: popupHTML,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#2c3e50',
-                width: 'auto',
-                padding: '1.5em'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    kembaliKeDashboard();
-                }
-            });
-
-        }).catch(err => {
-            console.error(err);
-            submitBtn.disabled = false;
-            submitBtn.style.backgroundColor = "#2c3e50";
-            submitBtn.innerText = originalText;
-            alert("Gagal mengirim data.");
+        })
+        .catch(error => {
+            Swal.close();
+            Swal.fire('Error', 'Terjadi kesalahan sistem.', 'error');
         });
     }
 
-    // Fungsi Kirim Telegram (Yang Benar dan Sudah Diperbaiki Menggunakan HTML)
-    function kirimTelegram(data, namaEos, tagEos, rowBaru) {
+    // ==============================================================
+    // FUNGSI KIRIM TELEGRAM (DENGAN MENTION HTML & 1 TOMBOL EMAIL)
+    // ==============================================================
+    function kirimTelegram(data, namaEos, tagEos, teleId, rowBaru) {
         if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
 
         let pesanDetail = "";
@@ -482,9 +435,14 @@
             pesanDetail = `👤 <b>Nama PIC:</b> ${data.pic}\n📞 <b>Nomor Telp PIC:</b> ${data.telp}\n📧 <b>Email PIC:</b> ${data.email}`;
         }
 
+        // Logika untuk men-tag EOS Pendamping agar berdering
         let infoEos = `<b>EOS Pendamping:</b> ${namaEos}`;
-        if (tagEos !== "") {
-            infoEos += ` (${tagEos})`; 
+        if (teleId && teleId !== "") {
+            // Jika ID Telegram ada, buat link mention
+            infoEos += ` (<a href="tg://user?id=${teleId}">${tagEos}</a>)`;
+        } else if (tagEos !== "") {
+            // Fallback jika ID belum diisi
+            infoEos += ` (${tagEos})`;
         }
 
         const pesan = `🚨 <b>NOTIFIKASI ${data.kategori.toUpperCase()}</b> 🚨\n\n` +
@@ -496,6 +454,7 @@
                       `👷 ${infoEos}\n` +
                       `Waktu Pengajuan: ${data.timestamp}`;
         
+        // Tombol inline hanya menyisakan Kirim Email
         const inlineKeyboard = {
             inline_keyboard: [
                 [
@@ -510,7 +469,7 @@
             body: JSON.stringify({ 
                 chat_id: TELEGRAM_CHAT_ID, 
                 text: pesan, 
-                parse_mode: 'HTML', // <--- KITA UBAH JADI HTML AGAR LEBIH AMAN
+                parse_mode: 'HTML',
                 reply_markup: inlineKeyboard
             })
         }).catch(err => console.log(err));
