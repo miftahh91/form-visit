@@ -116,7 +116,8 @@
         <form id="dynamicForm" onsubmit="submitForm(event)">
             <div class="form-group">
                 <label for="teknisi">Nama Teknisi</label>
-                <select id="teknisi" required>
+                <!-- TAMBAHAN FITUR 1: onchange="setLokasiOtomatis()" -->
+                <select id="teknisi" required onchange="setLokasiOtomatis()">
                     <option value="">-- Pilih Nama Teknisi --</option>
                     <option value="Ridwan Mulyadi">Ridwan Mulyadi</option>
                     <option value="Aryan Wahyu Kusuma">Aryan Wahyu Kusuma</option>
@@ -387,6 +388,8 @@
             payload.detail = document.getElementById('detail').value;
         } else {
             payload.lokasi = document.getElementById('lokasiSelect').value;
+            // Deteksi Kota otomatis dari mappingKota
+            payload.kota = mappingKota[payload.lokasi] || "-"; 
             payload.pic = document.getElementById('pic').value;
             payload.telp = document.getElementById('telp').value;
             payload.email = document.getElementById('email').value;
@@ -400,18 +403,63 @@
         .then(response => {
             Swal.close();
             if (response.result === "success") {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Data berhasil disimpan ke database.',
-                    confirmButtonColor: '#2c3e50'
-                });
-
-                // Panggil notifikasi Telegram dengan tambahan parameter tele_id
-                kirimTelegram(payload, response.eos, response.tele_eos, response.tele_id, response.row);
                 
-                document.getElementById('dynamicForm').reset();
-                kembaliKeDashboard();
+                let namaEos = response.eos; // Mengambil nama EOS dari respon database
+                let popupHTML = "";
+                
+                if (payload.kategori === "Form Pendampingan") {
+                    popupHTML = `
+                        <div style="text-align: left; font-size: 14px; line-height: 1.6; word-wrap: break-word;">
+                            <b>Nama Teknisi:</b> ${payload.teknisi}<br>
+                            <b>Tanggal Visit:</b> ${payload.tanggal}<br>
+                            <b>Lokasi Visit:</b> ${payload.lokasi}<br>
+                            <b>Detail Acara:</b> ${payload.detail}<br>
+                            <b>EOS Pendamping:</b> <span style="color:#2980b9; font-weight:bold;">${namaEos}</span><br>
+                            <b>Waktu Pengajuan:</b> ${payload.timestamp}
+                            <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
+                            <div style="text-align: center; color: #e74c3c; font-weight: bold;">
+                                📱 Silahkan Capture & Share ke Grup
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let infoKota = payload.kota !== "-" ? `<b>Kantor / Area:</b> ${payload.kota}<br>` : "";
+                    popupHTML = `
+                        <div style="text-align: left; font-size: 14px; line-height: 1.6; word-wrap: break-word;">
+                            <b>Kategori Form:</b> ${payload.kategori}<br>
+                            <b>Nama Teknisi:</b> ${payload.teknisi}<br>
+                            <b>Tanggal Visit:</b> ${payload.tanggal}<br>
+                            ${infoKota}
+                            <b>Lokasi Visit:</b> ${payload.lokasi}<br>
+                            <b>Nama PIC:</b> ${payload.pic}<br>
+                            <b>Nomor Telp PIC:</b> ${payload.telp}<br>
+                            <b>Email PIC:</b> ${payload.email}<br>
+                            <b>EOS Pendamping:</b> <span style="color:#2980b9; font-weight:bold;">${namaEos}</span><br>
+                            <b>Waktu Pengajuan:</b> ${payload.timestamp}
+                            <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ccc;">
+                            <div style="text-align: center; color: #e74c3c; font-weight: bold;">
+                                📱 Silahkan Capture & Share ke Grup
+                            </div>
+                        </div>
+                    `;
+                }
+
+                kirimTelegram(payload, response.eos, response.tele_eos, response.tele_id, response.row);
+
+                Swal.fire({
+                    title: 'Data Berhasil Disubmit!',
+                    html: popupHTML,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#2c3e50',
+                    width: 'auto',
+                    padding: '1.5em'
+                }).then((result) => {
+                    document.getElementById('dynamicForm').reset();
+                    if (result.isConfirmed) {
+                        kembaliKeDashboard();
+                    }
+                });
             } else {
                 Swal.fire('Error', 'Gagal menyimpan data: ' + response.error, 'error');
             }
@@ -423,25 +471,28 @@
     }
 
     // ==============================================================
-    // FUNGSI KIRIM TELEGRAM (DENGAN MENTION HTML & 1 TOMBOL EMAIL)
+    // FUNGSI KIRIM TELEGRAM (DENGAN NAMA KOTA)
     // ==============================================================
     function kirimTelegram(data, namaEos, tagEos, teleId, rowBaru) {
         if (TELEGRAM_BOT_TOKEN.includes("GANTI")) return;
 
         let pesanDetail = "";
+        let infoKota = ""; // Variabel untuk menampung teks Kota
+        
         if (data.kategori === "Form Pendampingan") {
             pesanDetail = `📝 <b>Detail Acara:</b> ${data.detail}`;
         } else {
+            // Jika ada data kota, tambahkan ke notifikasi
+            if (data.kota && data.kota !== "-") {
+                infoKota = `Kantor / Area: ${data.kota}\n`;
+            }
             pesanDetail = `👤 <b>Nama PIC:</b> ${data.pic}\n📞 <b>Nomor Telp PIC:</b> ${data.telp}\n📧 <b>Email PIC:</b> ${data.email}`;
         }
 
-        // Logika untuk men-tag EOS Pendamping agar berdering
         let infoEos = `<b>EOS Pendamping:</b> ${namaEos}`;
         if (teleId && teleId !== "") {
-            // Jika ID Telegram ada, buat link mention
             infoEos += ` (<a href="tg://user?id=${teleId}">${tagEos}</a>)`;
         } else if (tagEos !== "") {
-            // Fallback jika ID belum diisi
             infoEos += ` (${tagEos})`;
         }
 
@@ -449,12 +500,12 @@
                       `Kategori Form: ${data.kategori}\n` +
                       `Nama Teknisi: ${data.teknisi}\n` +
                       `Tanggal Visit: ${data.tanggal}\n` +
+                      `${infoKota}` + // <--- Menampilkan kota di sini
                       `Lokasi Visit: ${data.lokasi}\n` +
                       `${pesanDetail}\n` +
                       `👷 ${infoEos}\n` +
                       `Waktu Pengajuan: ${data.timestamp}`;
         
-        // Tombol inline hanya menyisakan Kirim Email
         const inlineKeyboard = {
             inline_keyboard: [
                 [
@@ -502,6 +553,120 @@
             `;
             tbody.appendChild(row);
         });
+    }
+
+    // ==============================================================
+    // TAMBAHAN FITUR 1: DATABASE PEMETAAN LOKASI TEKNISI
+    // ==============================================================
+    const mappingLokasi = {
+        "Ridwan Mulyadi": "KOJK Prov Jawa Barat",
+        "Aryan Wahyu Kusuma": "KOJK Prov Jawa Tengah",
+        "M Rinofa Al Rasyid": "KOJK Prov Jawa Timur",
+        "Ispa Wardani": "KOJK Prov Sumatera Utara",
+        "Nur Awal Fadli": "KOJK Prov Sulawesi Selatan dan Sulawesi Barat",
+        "Araufu Jevian": "KOJK Prov Sumatera Selatan dan Bangka Belitung",
+        "I Dewa Putu Agustiantow Sukahet": "KOJK Prov Bali",
+        "Dessa Putera Erlangga": "KOJK Prov Kalimantan Timur dan Kalimantan Utara",
+        "Muhammad Fauzi": "KOJK Prov Banten",
+        "Dwi Pringgo Zubiantono": "KOJK Prov Daerah Istimewa Yogyakarta",
+        "Muhammad Wahyu": "KOJK Prov Sumatera Barat",
+        "Arfan Affandi": "KOJK Prov Riau",
+        "Wahyu Mulaputra Maspeke": "KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara",
+        "Sulaiman": "KOJK Prov Lampung",
+        "Fuja Rizky Sahbana": "KOJK Prov Kalimantan Selatan",
+        "Yulli Ariyadi": "KOJK Prov Cirebon",
+        "Tatang Waula Nurwana": "KOJK Prov Tasikmalaya",
+        "Donny Cahyanto": "KOJK Prov Solo",
+        "Budi Iskandar": "KOJK Prov Tegal",
+        "Rangga Gusti Ananta": "KOJK Prov Purwokerto",
+        "Rendy Andika Saputra": "KOJK Prov Malang",
+        "Edrian Prasetyo Budi": "KOJK Prov Kediri",
+        "Wuryantoro Dany Kartiko": "KOJK Prov Jember",
+        "M. Arif Tirtana": "KOJK Prov Aceh",
+        "Syafuan Razidin": "KOJK Prov Kepulauan Riau",
+        "Rahmat Laduni": "KOJK Prov Sulawesi Tengah",
+        "Muh Habiballah": "KOJK Prov Sulawesi Tenggara",
+        "Syarifuddin Syah": "KOJK Prov Sulawesi Tenggara Gedung 2",
+        "Julfikar Jafar": "KOJK Prov Maluku Utara",
+        "Hanry Lekatompessy": "KOJK Prov Maluku",
+        "Mohammad Isra": "KOJK Prov Papua",
+        "Efraim Paga": "KOJK Provinsi Papua Barat dan Papua Barat Daya",
+        "Ardiansyah Rangkuti": "KOJK Prov Jambi",
+        "Al Hidayat Jambak": "KOJK Prov Bengkulu",
+        "Apung Seftiawan": "KOJK Provinsi Bangka Belitung",
+        "Arie Listanto": "KOJK Prov Nusa Tenggara Barat",
+        "Antonius Kasmiaji": "KOJK Prov Nusa Tenggara Timur",
+        "Wawan Putrawana": "KOJK Prov Kalimantan Barat",
+        "Muhammad Muhan Harhari": "KOJK Prov Kalimantan Tengah",
+        "Rahmat Hidayat": "Gedung Arsip Salemba"
+    };
+
+    // ==============================================================
+    // DATABASE PEMETAAN KOTA/KANTOR (FITUR 2)
+    // ==============================================================
+    const mappingKota = {
+        "KOJK Prov Jawa Barat": "KOJK Bandung",
+        "KOJK Prov Jawa Tengah": "KOJK Semarang",
+        "KOJK Prov Jawa Timur": "KOJK Surabaya",
+        "KOJK Prov Sumatera Utara": "KOJK Medan",
+        "KOJK Prov Sulawesi Selatan dan Sulawesi Barat": "KOJK Makassar",
+        "KOJK Prov Sumatera Selatan dan Bangka Belitung": "KOJK Palembang",
+        "KOJK Prov Bali": "KOJK Denpasar",
+        "KOJK Prov Kalimantan Timur dan Kalimantan Utara": "KOJK Samarinda",
+        "KOJK Prov Banten": "KOJK Serang",
+        "KOJK Prov Daerah Istimewa Yogyakarta": "KOJK Yogyakarta",
+        "KOJK Prov Sumatera Barat": "KOJK Padang",
+        "KOJK Prov Riau": "KOJK Pekanbaru",
+        "KOJK Prov Sulawesi Utara, Gorontalo dan Maluku Utara": "KOJK Manado",
+        "KOJK Prov Lampung": "KOJK Bandar Lampung",
+        "KOJK Prov Kalimantan Selatan": "KOJK Banjarmasin",
+        "KOJK Prov Cirebon": "KOJK Cirebon",
+        "KOJK Prov Tasikmalaya": "KOJK Tasikmalaya",
+        "KOJK Prov Solo": "KOJK Solo",
+        "KOJK Prov Tegal": "KOJK Tegal",
+        "KOJK Prov Purwokerto": "KOJK Purwokerto",
+        "KOJK Prov Malang": "KOJK Malang",
+        "KOJK Prov Kediri": "KOJK Kediri",
+        "KOJK Prov Jember": "KOJK Jember",
+        "KOJK Prov Aceh": "KOJK Banda Aceh",
+        "KOJK Prov Kepulauan Riau": "KOJK Batam",
+        "KOJK Prov Sulawesi Tengah": "KOJK Palu",
+        "KOJK Prov Sulawesi Tenggara": "KOJK Kendari",
+        "KOJK Prov Sulawesi Tenggara Gedung 2": "KOJK Kendari Gd 2",
+        "KOJK Prov Maluku Utara": "KOJK Ternate",
+        "KOJK Prov Maluku": "KOJK Ambon",
+        "KOJK Prov Papua": "KOJK Jayapura",
+        "KOJK Provinsi Papua Barat dan Papua Barat Daya": "KOJK Manokwari",
+        "KOJK Prov Jambi": "KOJK Jambi",
+        "KOJK Prov Bengkulu": "KOJK Bengkulu",
+        "KOJK Provinsi Bangka Belitung": "KOJK Pangkal Pinang",
+        "KOJK Prov Nusa Tenggara Barat": "KOJK Mataram",
+        "KOJK Prov Nusa Tenggara Timur": "KOJK Kupang",
+        "KOJK Prov Kalimantan Barat": "KOJK Pontianak",
+        "KOJK Prov Kalimantan Tengah": "KOJK Palangkaraya",
+        "Gedung Arsip Salemba": "Gedung Arsip"
+    };
+
+    // ==============================================================
+    // TAMBAHAN FITUR 1: FUNGSI AUTO-FILL & KUNCI LOKASI 
+    // ==============================================================
+    function setLokasiOtomatis() {
+        if (currentKategori === "Form Visit" || currentKategori === "Form UAT") {
+            const nama = document.getElementById('teknisi').value;
+            const lokasiField = document.getElementById('lokasiSelect');
+            
+            if (lokasiField) {
+                if (mappingLokasi[nama]) {
+                    lokasiField.value = mappingLokasi[nama];
+                    lokasiField.style.pointerEvents = "none";
+                    lokasiField.style.backgroundColor = "#e9ecef"; 
+                } else {
+                    lokasiField.value = "";
+                    lokasiField.style.pointerEvents = "auto";
+                    lokasiField.style.backgroundColor = "#fff";
+                }
+            }
+        }
     }
 </script>
 
