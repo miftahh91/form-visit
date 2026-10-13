@@ -71,7 +71,7 @@
         <h2>Dashboard Teknisi Lapangan</h2>
         <p style="text-align: center; color: #666;">Silakan pilih kategori formulir yang ingin diisi:</p>
         <div class="menu-grid">
-            <div class="menu-card" onclick="pilihForm('Form Visit')">📋 Form Visit</div>
+            <div class="menu-card" onclick="pilihForm('Form Laporan Bulanan')">📋 Form Laporan Bulanan</div>
             <div class="menu-card pendampingan" onclick="pilihForm('Form Pendampingan')">🤝 Form Pendampingan</div>
             <div class="menu-card uats" onclick="pilihForm('Form UAT')">✅ Form UAT</div>
         </div>
@@ -662,7 +662,7 @@
     // TAMBAHAN FITUR 1: FUNGSI AUTO-FILL & KUNCI LOKASI 
     // ==============================================================
     function setLokasiOtomatis() {
-        if (currentKategori === "Form Visit" || currentKategori === "Form UAT") {
+        if (currentKategori === "Form Laporan Bulanan" || currentKategori === "Form UAT") {
             const nama = document.getElementById('teknisi').value;
             const lokasiField = document.getElementById('lokasiSelect');
             
